@@ -426,7 +426,7 @@ services:
     restart: unless-stopped
   #  ================================== Apache Spark 2.x ========================================== #
   spark-master:
-    image: trivadis/apache-spark-master:3.0.0-hadoop2.8
+    image: trivadis/apache-spark-master:2.4.7-hadoop2.8
     container_name: spark-master
     hostname: spark-master
     ports:
@@ -453,15 +453,15 @@ services:
       SPARK_DEFAULTS_CONF_spark_sql_catalogImplementation: hive
       SPARK_DEFAULTS_CONF_spark_sql_warehouse_dir: s3a://hive-bucket/warehouse
       SPARK_DEFAULTS_CONF_spark_yarn_dist_files: /spark/conf/hive-site.xml
-      SPARK_DEFAULTS_CONF_spark_driver_extraJavaOptions:
-      SPARK_DEFAULTS_CONF_spark_executor_extraJavaOptions:
+      SPARK_DEFAULTS_CONF_spark_driver_extraJavaOptions: -Dcom.amazonaws.services.s3.enableV4
+      SPARK_DEFAULTS_CONF_spark_executor_extraJavaOptions: -Dcom.amazonaws.services.s3.enableV4
     volumes:
       - ./data-transfer:/data-transfer
       - ./plugins/spark/jars:/extra-jars
       - ./container-volume/spark/logs/:/var/log/spark/logs
     restart: unless-stopped
   spark-worker-1:
-    image: trivadis/apache-spark-worker:3.0.0-hadoop2.8
+    image: trivadis/apache-spark-worker:2.4.7-hadoop2.8
     container_name: spark-worker-1
     hostname: spark-worker-1
     depends_on:
@@ -491,15 +491,15 @@ services:
       SPARK_DEFAULTS_CONF_spark_sql_catalogImplementation: hive
       SPARK_DEFAULTS_CONF_spark_sql_warehouse_dir: s3a://hive-bucket/warehouse
       SPARK_DEFAULTS_CONF_spark_yarn_dist_files: /spark/conf/hive-site.xml
-      SPARK_DEFAULTS_CONF_spark_driver_extraJavaOptions:
-      SPARK_DEFAULTS_CONF_spark_executor_extraJavaOptions:
+      SPARK_DEFAULTS_CONF_spark_driver_extraJavaOptions: -Dcom.amazonaws.services.s3.enableV4
+      SPARK_DEFAULTS_CONF_spark_executor_extraJavaOptions: -Dcom.amazonaws.services.s3.enableV4
     volumes:
       - ./data-transfer:/data-transfer
       - ./plugins/spark/jars:/extra-jars
       - ./container-volume/spark/logs/:/var/log/spark/logs
     restart: unless-stopped
   spark-worker-2:
-    image: trivadis/apache-spark-worker:3.0.0-hadoop2.8
+    image: trivadis/apache-spark-worker:2.4.7-hadoop2.8
     container_name: spark-worker-2
     hostname: spark-worker-2
     depends_on:
@@ -529,15 +529,15 @@ services:
       SPARK_DEFAULTS_CONF_spark_sql_catalogImplementation: hive
       SPARK_DEFAULTS_CONF_spark_sql_warehouse_dir: s3a://hive-bucket/warehouse
       SPARK_DEFAULTS_CONF_spark_yarn_dist_files: /spark/conf/hive-site.xml
-      SPARK_DEFAULTS_CONF_spark_driver_extraJavaOptions:
-      SPARK_DEFAULTS_CONF_spark_executor_extraJavaOptions:
+      SPARK_DEFAULTS_CONF_spark_driver_extraJavaOptions: -Dcom.amazonaws.services.s3.enableV4
+      SPARK_DEFAULTS_CONF_spark_executor_extraJavaOptions: -Dcom.amazonaws.services.s3.enableV4
     volumes:
       - ./data-transfer:/data-transfer
       - ./plugins/spark/jars:/extra-jars
       - ./container-volume/spark/logs/:/var/log/spark/logs
     restart: unless-stopped
   spark-history:
-    image: trivadis/apache-spark-worker:3.0.0-hadoop2.8
+    image: trivadis/apache-spark-worker:2.4.7-hadoop2.8
     command: /spark/bin/spark-class org.apache.spark.deploy.history.HistoryServer
     container_name: spark-history
     hostname: spark-history
@@ -561,8 +561,8 @@ services:
       SPARK_DEFAULTS_CONF_spark_sql_catalogImplementation: hive
       SPARK_DEFAULTS_CONF_spark_sql_warehouse_dir: s3a://hive-bucket/warehouse
       SPARK_DEFAULTS_CONF_spark_yarn_dist_files: /spark/conf/hive-site.xml
-      SPARK_DEFAULTS_CONF_spark_driver_extraJavaOptions:
-      SPARK_DEFAULTS_CONF_spark_executor_extraJavaOptions:
+      SPARK_DEFAULTS_CONF_spark_driver_extraJavaOptions: -Dcom.amazonaws.services.s3.enableV4
+      SPARK_DEFAULTS_CONF_spark_executor_extraJavaOptions: -Dcom.amazonaws.services.s3.enableV4
     volumes:
       - ./data-transfer:/data-transfer
       - ./plugins/spark/jars:/extra-jars
@@ -652,8 +652,8 @@ services:
       SPARK_DEFAULTS_CONF_spark_sql_catalogImplementation: hive
       SPARK_DEFAULTS_CONF_spark_sql_warehouse_dir: s3a://hive-bucket/warehouse
       SPARK_DEFAULTS_CONF_spark_yarn_dist_files: /spark/conf/hive-site.xml
-      SPARK_DEFAULTS_CONF_spark_driver_extraJavaOptions:
-      SPARK_DEFAULTS_CONF_spark_executor_extraJavaOptions:
+      SPARK_DEFAULTS_CONF_spark_driver_extraJavaOptions: -Dcom.amazonaws.services.s3.enableV4
+      SPARK_DEFAULTS_CONF_spark_executor_extraJavaOptions: -Dcom.amazonaws.services.s3.enableV4
       ZEPPELIN_ADDR: 0.0.0.0
       ZEPPELIN_PORT: '8080'
       ZEPPELIN_INTERPRETER_CONNECT_TIMEOUT: 120000
@@ -666,8 +666,8 @@ services:
       SPARK_UI_PORT: 4050
       SPARK_DRIVER_PORT: 5050
       SPARK_BLOCKMANGER_PORT: 6060
-      SPARK_DRIVER_EXTRAJAVAOPTIONS:
-      SPARK_EXECUTOR_EXTRAJAVAOPTIONS:
+      SPARK_DRIVER_EXTRAJAVAOPTIONS: -Dcom.amazonaws.services.s3.enableV4
+      SPARK_EXECUTOR_EXTRAJAVAOPTIONS: -Dcom.amazonaws.services.s3.enableV4
       SPARK_HADOOP_FS_S3A_ACCESS_KEY: V42FCGRVMK24JJ8DHUYG
       SPARK_HADOOP_FS_S3A_SECRET_KEY: bKhWxVF3kQoLY9kFmt91l+tDrEoZjqnWXzY9Eza
       PYSPARK_PYTHON: python3

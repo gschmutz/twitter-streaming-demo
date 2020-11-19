@@ -68,6 +68,7 @@
       HADOOP_datanodes: 2
       # ===== Spark ========
       SPARK_enable: true
+      SPARK_version: 2.4.7-hadoop2.8
       # "hive" or "in-memory"
       SPARK_catalog: hive
       SPARK_workers: 2
@@ -76,8 +77,8 @@
       SPARK_jars_excludes: ''
       SPARK_jars: ''
       SPARK_jars_ivySettings: ''
-      SPARK_driver_extraJavaOptions: ''
-      SPARK_executor_extraJavaOptions: ''
+      SPARK_driver_extraJavaOptions: '-Dcom.amazonaws.services.s3.enableV4'
+      SPARK_executor_extraJavaOptions: '-Dcom.amazonaws.services.s3.enableV4'
       # misc spark 'addons'
       SPARK_HISTORY_enable: true
       SPARK_THRIFT_enable: false
