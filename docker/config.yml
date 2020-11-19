@@ -114,7 +114,7 @@
       STREAMSETS_volume_map_data: false
       STREAMSETS_activate_https: false
       STREAMSETS_additional_port_mappings: 0
-      STREAMSETS_http_authentication: none
+      STREAMSETS_http_authentication: ''
       STREAMSETS_TRANSFORMER_enable: false
       STREAMSETS_TRANSFORMER_volume_map_data: false
       STREAMSETS_EDGE_enable: false

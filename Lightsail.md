@@ -67,10 +67,10 @@ sudo sysctl -w vm.max_map_count=262144
 
 # Get the project
 cd /home/${USERNAME} 
-git clone https://github.com/gschmutz/iot-vehicle-tracking-demo.git
-chown -R ${USERNAME}:${PASSWORD} iot-vehicle-tracking-demo
+git clone https://github.com/gschmutz/twitter-streaming-demo.git
+chown -R ${USERNAME}:${PASSWORD} twitter-streaming-demo
 
-cd /home/${USERNAME}/iot-vehicle-tracking-demo/docker
+cd /home/${USERNAME}/twitter-streaming-demo/docker
 
 # Prepare Environment Variables into .bash_profile file
 printf "export PUBLIC_IP=$PUBLIC_IP\n" >> /home/$USERNAME/.bash_profile
