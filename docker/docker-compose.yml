@@ -128,7 +128,8 @@ services:
     hostname: schema-registry-1
     container_name: schema-registry-1
     labels:
-      com.mdps.service.restapi.url: http://${PUBLIC_IP}:8081
+      platys.restapi.title: Schema Registry REST API
+      platys.restapi.url: http://${PUBLIC_IP}:8081
     ports:
       - 8081:8081
     environment:
@@ -146,7 +147,8 @@ services:
     image: confluentinc/cp-kafka-connect:6.0.0
     container_name: kafka-connect-1
     labels:
-      com.mdps.service.restapi.url: http://${PUBLIC_IP}:8083
+      platys.restapi.title: Kafka Connect REST API
+      platys.restapi.url: http://${PUBLIC_IP}:8083
     depends_on:
       - schema-registry-1
     ports:
@@ -179,6 +181,10 @@ services:
       CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-4.0.0.jar
       AWS_ACCESS_KEY_ID: V42FCGRVMK24JJ8DHUYG
       AWS_SECRET_ACCESS_KEY: bKhWxVF3kQoLY9kFmt91l+tDrEoZjqnWXzY9Eza
+      # External secrets config
+      # See https://docs.confluent.io/current/connect/security.html#externalizing-secrets
+      CONNECT_CONFIG_PROVIDERS: file
+      CONNECT_CONFIG_PROVIDERS_FILE_CLASS: org.apache.kafka.common.config.provider.FileConfigProvider
     volumes:
       - ./data-transfer:/data-transfer
       - ./plugins/kafka-connect:/etc/kafka-connect/addl-plugins
@@ -202,7 +208,8 @@ services:
     image: confluentinc/cp-kafka-connect:6.0.0
     container_name: kafka-connect-2
     labels:
-      com.mdps.service.restapi.url: http://${PUBLIC_IP}:8084
+      platys.restapi.title: Kafka Connect REST API
+      platys.restapi.url: http://${PUBLIC_IP}:8084
     depends_on:
       - schema-registry-1
     ports:
@@ -235,6 +242,10 @@ services:
       CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-4.0.0.jar
       AWS_ACCESS_KEY_ID: V42FCGRVMK24JJ8DHUYG
       AWS_SECRET_ACCESS_KEY: bKhWxVF3kQoLY9kFmt91l+tDrEoZjqnWXzY9Eza
+      # External secrets config
+      # See https://docs.confluent.io/current/connect/security.html#externalizing-secrets
+      CONNECT_CONFIG_PROVIDERS: file
+      CONNECT_CONFIG_PROVIDERS_FILE_CLASS: org.apache.kafka.common.config.provider.FileConfigProvider
     volumes:
       - ./data-transfer:/data-transfer
       - ./plugins/kafka-connect:/etc/kafka-connect/addl-plugins
@@ -245,7 +256,8 @@ services:
     hostname: ksqldb-server-1
     container_name: ksqldb-server-1
     labels:
-      com.mdps.service.restapi.url: http://${PUBLIC_IP}:8088
+      platys.restapi.title: ksqlDB Server REST API
+      platys.restapi.url: http://${PUBLIC_IP}:8088
     ports:
       - 8088:8088
       - 1095:1095
@@ -285,7 +297,8 @@ services:
     hostname: ksqldb-server-2
     container_name: ksqldb-server-2
     labels:
-      com.mdps.service.restapi.url: http://${PUBLIC_IP}:8089
+      platys.restapi.title: ksqlDB Server REST API
+      platys.restapi.url: http://${PUBLIC_IP}:8089
     ports:
       - 8089:8088
       - 1096:1095
@@ -350,7 +363,8 @@ services:
     container_name: schema-registry-ui
     hostname: schema-registry-ui
     labels:
-      com.mdps.service.webui.url: http://${PUBLIC_IP}:28102
+      platys.webui.title: Confluent Schema Registry UI
+      platys.webui.url: http://${PUBLIC_IP}:28102
     depends_on:
       - kafka-1
       - schema-registry-1
@@ -367,7 +381,8 @@ services:
     container_name: kafka-connect-ui
     hostname: kafka-connect-ui
     labels:
-      com.mdps.service.webui.url: http://${PUBLIC_IP}:28103
+      platys.webui.title: Kafka Connect UI
+      platys.webui.url: http://${PUBLIC_IP}:28103
     depends_on:
       - kafka-connect-1
     ports:
@@ -384,7 +399,8 @@ services:
     container_name: cmak
     hostname: cmak
     labels:
-      com.mdps.service.webui.url: http://${PUBLIC_IP}:28104
+      platys.webui.title: Cluster Manager for Apache Kafka UI
+      platys.webui.url: http://${PUBLIC_IP}:28104
     depends_on:
       - zookeeper-1
       - kafka-1
@@ -405,7 +421,8 @@ services:
     container_name: akhq
     hostname: akhq
     labels:
-      com.mdps.service.webui.url: http://${PUBLIC_IP}:28107
+      platys.webui.title: Apache Kafka AQ UI
+      platys.webui.url: http://${PUBLIC_IP}:28107
     ports:
       - 28107:8080
     environment:
@@ -542,10 +559,10 @@ services:
     container_name: spark-history
     hostname: spark-history
     labels:
-      com.mdps.service.webui.name: Spark History Server
-      com.mdps.service.webui.url: http://${PUBLIC_IP}:28117
-      com.mdps.service.restapi.name: Spark History Server
-      com.mdps.service.restapi.url: http://${PUBLIC_IP}:28117/api/v1
+      platys.webui.title: Spark History Server
+      platys.webui.url: http://${PUBLIC_IP}:28117
+      platys.restapi.title: Spark History Server
+      platys.restapi.url: http://${PUBLIC_IP}:28117/api/v1
     expose:
       - 18080
     ports:
@@ -599,10 +616,10 @@ services:
     container_name: streamsets-1
     hostname: streamsets-1
     labels:
-      com.mdps.service.webui.name: StreamSets Data Collector UI
-      com.mdps.service.webui.url: http://${PUBLIC_IP}:18630
-      com.mdps.service.restapi.name: StreamSets Data Collector REST API
-      com.mdps.service.restapi.url: http://${PUBLIC_IP}:18630/collector/restapi
+      platys.webui.title: StreamSets Data Collector UI
+      platys.webui.url: http://${PUBLIC_IP}:18630
+      platys.restapi.title: StreamSets Data Collector REST API
+      platys.restapi.url: http://${PUBLIC_IP}:18630/collector/restapi
     ports:
       - 18630:18630
     environment:
@@ -627,8 +644,8 @@ services:
     container_name: zeppelin
     hostname: zeppelin
     labels:
-      com.mdps.service.webui.name: Apache Zeppelin UI
-      com.mdps.service.webui.url: http://${PUBLIC_IP}:28080
+      platys.webui.title: Apache Zeppelin UI
+      platys.webui.url: http://${PUBLIC_IP}:28080
     ports:
       - 28080:8080
       - 6060:6060
@@ -779,8 +796,8 @@ services:
     container_name: cloudbeaver
     hostname: cloudbeaver
     labels:
-      com.mdps.service.webui.name: Cloudbeaver UI
-      com.mdps.service.webui.url: http://${PUBLIC_IP}:8978
+      platys.webui.title: Cloudbeaver UI
+      platys.webui.url: http://${PUBLIC_IP}:8978
     ports:
       - 8978:8978
     restart: unless-stopped
@@ -790,8 +807,8 @@ services:
     hostname: presto-1
     container_name: presto-1
     labels:
-      com.mdps.service.webui.name: Presto UI
-      com.mdps.service.webui.url: http://${PUBLIC_IP}:28081
+      platys.webui.title: Presto UI
+      platys.webui.url: http://${PUBLIC_IP}:28081
     ports:
       - 28081:8080
     volumes:
@@ -815,8 +832,8 @@ services:
     container_name: minio
     hostname: minio
     labels:
-      com.mdps.service.webui.name: MinIO UI
-      com.mdps.service.webui.url: http://${PUBLIC_IP}:9000
+      platys.webui.title: MinIO UI
+      platys.webui.url: http://${PUBLIC_IP}:9000
     ports:
       - 9000:9000
     environment:
@@ -882,8 +899,8 @@ services:
     container_name: mqtt-ui
     hostname: mqtt-ui
     labels:
-      com.mdps.service.webui.name: HiveMQ UI
-      com.mdps.service.webui.url: http://${PUBLIC_IP}:28136
+      platys.webui.title: HiveMQ UI
+      platys.webui.url: http://${PUBLIC_IP}:28136
     ports:
       - 28136:80
     volumes:
@@ -894,6 +911,9 @@ services:
     image: svenihoney/wetty:latest
     container_name: wetty
     hostname: wetty
+    labels:
+      platys.webui.title: WeTTY UI
+      platys.webui.url: http://${PUBLIC_IP}:3001
     ports:
       - 3001:3000
     environment:
@@ -902,5 +922,35 @@ services:
       - REMOTE_SSH_USER=
       - WETTY_PORT=3000
     volumes:
+      - ./data-transfer:/data-transfer
+    restart: unless-stopped
+  #  ================================== markdown-viewer ========================================== #
+  markdown-viewer:
+    image: minimum/markdown-web:latest
+    container_name: markdown-viewer
+    hostname: markdown-viewer
+    labels:
+      platys.building-block: Infrastructure
+      platys.webui.title: Markdown Viewer UI
+      platys.webui.url: http://${PUBLIC_IP}
+    ports:
+      - 80:80
+    volumes:
+      - ./documentation:/home/python/markdown
+      - ./data-transfer:/data-transfer
+    restart: unless-stopped
+  markdown-generator:
+    image: trivadis/jinja2:latest
+    container_name: markdown-generator
+    hostname: markdown-generator
+    labels:
+      platys.building-block: Infrastructure
+    environment:
+      PUBLIC_IP: ${PUBLIC_IP}
+    volumes:
+      - ./documentation/templates:/templates
+      - ./documentation/templates:/scripts
+      - .:/variables
+      - ./documentation:/output
       - ./data-transfer:/data-transfer
     restart: unless-stopped
