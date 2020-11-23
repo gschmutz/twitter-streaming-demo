@@ -930,7 +930,6 @@ services:
     container_name: markdown-viewer
     hostname: markdown-viewer
     labels:
-      platys.building-block: Infrastructure
       platys.webui.title: Markdown Viewer UI
       platys.webui.url: http://${PUBLIC_IP}
     ports:
@@ -939,12 +938,10 @@ services:
       - ./documentation:/home/python/markdown
       - ./data-transfer:/data-transfer
     restart: unless-stopped
-  markdown-generator:
-    image: trivadis/jinja2:latest
-    container_name: markdown-generator
-    hostname: markdown-generator
-    labels:
-      platys.building-block: Infrastructure
+  markdown-renderer:
+    image: trivadis/jinja2-renderer:latest
+    container_name: markdown-renderer
+    hostname: markdown-renderer
     environment:
       PUBLIC_IP: ${PUBLIC_IP}
     volumes:
