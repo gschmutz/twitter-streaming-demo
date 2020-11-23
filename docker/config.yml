@@ -146,16 +146,16 @@
       KIBANA_enable: false #needs to have elasticsearch enabled to work
       SUPERSET_enable: false
       REDASH_enable: false
-      SMASHING_enable: true
+      SMASHING_enable: false
       SMASHING_volume_map_dashboards: false
       SMASHING_volume_map_jobs: false
       SMASHING_volume_map_widgets: false
       SMASHING_install_gems: ''
       SMASHING_install_widgets: ''
 
-      TIPBOARD_enable: true
-      TIPBOARD_volume_map_dashboards: true
-      CHARTBOARD_enable: true
+      TIPBOARD_enable: false
+      TIPBOARD_volume_map_dashboards: false
+      CHARTBOARD_enable: false
 
       # ===== NoSQL ========
       MEMCACHED_enable: false
