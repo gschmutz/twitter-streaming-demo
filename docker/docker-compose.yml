@@ -7,7 +7,6 @@ networks:
     name: iot-vehicle-tracking-demo
 # enforce some dependencies
 # enforce some dependencies
-# enforce some dependencies
 services:
   #  ================================== Zookeeper ========================================== #
   zookeeper-1:
@@ -696,52 +695,6 @@ services:
       - ./conf/zeppelin/shiro.ini:/opt/zeppelin/conf/shiro.ini
       - ./conf/zeppelin/interpreter.json:/opt/zeppelin/conf/interpreter.json
       - ./conf/zeppelin/interpreter-setting.json:/opt/zeppelin/interpreter/spark/interpreter-setting.json
-    restart: unless-stopped
-  #  ================================== Smashing ========================================== #
-  smashing:
-    image: trivadis/smashing:1.3.0
-    hostname: smashing
-    container_name: smashing
-    ports:
-      - 28171:3030
-    environment:
-      WIDGETS:
-      GEMS:
-    volumes:
-      - ./data-transfer:/data-transfer
-    restart: unless-stopped
-  #  ================================== Tiboard Dashboard ========================================== #
-  tipboard:
-    image: trivadis/tipboard:latest
-    hostname: tipboard
-    container_name: tipboard
-    ports:
-      - 28172:7272
-    environment:
-      TIPBOARD_redis_host: "'redis-1'"
-      TIPBOARD_redis_port: 6379
-      TIPBOARD_redis_password: None
-      TIPBOARD_redis_db: 4
-      TIPBOARD_debug: "'False'"
-      TIPBOARD_api_key: "'e2c3275d0e1a4bc0da360dd225d74a43'"
-      TIPBOARD_host: "'localhost'"
-      TIPBOARD_port: 7272
-      TIPBOARD_project_name: "'sample'"
-      TIPBOARD_flipboard_interval: 0
-    volumes:
-      - ./data-transfer:/data-transfer
-      - ./scripts/tipboard:/dashboards
-      - ./plugins/tipboard:/root/.tipboard/custom_tiles
-    restart: unless-stopped
-  #  ================================== Tiboard Dashboard ========================================== #
-  chartboard:
-    image: trivadis/chartboard:latest
-    hostname: chartboard
-    container_name: chartboard
-    ports:
-      - 28173:8080
-    volumes:
-      - ./data-transfer:/data-transfer
     restart: unless-stopped
   #  ================================== Redis ========================================== #
   redis-1:
