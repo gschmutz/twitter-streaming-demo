@@ -1,6 +1,8 @@
-# =====================================================
-# Platform: iot-vehicle-tracking-demo
-# =====================================================
+# =======================================================================
+# Platform Name            iot-vehicle-tracking-demo
+# Platform Stack:          trivadis/platys-modern-data-platform
+# Platform Stack Version:  1.9.0-preview
+# =======================================================================
 version: '3.5'
 networks:
   default:
@@ -127,8 +129,8 @@ services:
     hostname: schema-registry-1
     container_name: schema-registry-1
     labels:
-      platys.restapi.title: Schema Registry REST API
-      platys.restapi.url: http://${PUBLIC_IP}:8081
+      com.platys.restapi.title: Schema Registry REST API
+      com.platys.restapi.url: http://${PUBLIC_IP}:8081
     ports:
       - 8081:8081
     environment:
@@ -146,8 +148,8 @@ services:
     image: confluentinc/cp-kafka-connect:6.0.0
     container_name: kafka-connect-1
     labels:
-      platys.restapi.title: Kafka Connect REST API
-      platys.restapi.url: http://${PUBLIC_IP}:8083
+      com.platys.restapi.title: Kafka Connect REST API
+      com.platys.restapi.url: http://${PUBLIC_IP}:8083
     depends_on:
       - schema-registry-1
     ports:
@@ -207,8 +209,8 @@ services:
     image: confluentinc/cp-kafka-connect:6.0.0
     container_name: kafka-connect-2
     labels:
-      platys.restapi.title: Kafka Connect REST API
-      platys.restapi.url: http://${PUBLIC_IP}:8084
+      com.platys.restapi.title: Kafka Connect REST API
+      com.platys.restapi.url: http://${PUBLIC_IP}:8084
     depends_on:
       - schema-registry-1
     ports:
@@ -255,8 +257,8 @@ services:
     hostname: ksqldb-server-1
     container_name: ksqldb-server-1
     labels:
-      platys.restapi.title: ksqlDB Server REST API
-      platys.restapi.url: http://${PUBLIC_IP}:8088
+      com.platys.restapi.title: ksqlDB Server REST API
+      com.platys.restapi.url: http://${PUBLIC_IP}:8088
     ports:
       - 8088:8088
       - 1095:1095
@@ -296,8 +298,8 @@ services:
     hostname: ksqldb-server-2
     container_name: ksqldb-server-2
     labels:
-      platys.restapi.title: ksqlDB Server REST API
-      platys.restapi.url: http://${PUBLIC_IP}:8089
+      com.platys.restapi.title: ksqlDB Server REST API
+      com.platys.restapi.url: http://${PUBLIC_IP}:8089
     ports:
       - 8089:8088
       - 1096:1095
@@ -362,8 +364,8 @@ services:
     container_name: schema-registry-ui
     hostname: schema-registry-ui
     labels:
-      platys.webui.title: Confluent Schema Registry UI
-      platys.webui.url: http://${PUBLIC_IP}:28102
+      com.platys.webui.title: Confluent Schema Registry UI
+      com.platys.webui.url: http://${PUBLIC_IP}:28102
     depends_on:
       - kafka-1
       - schema-registry-1
@@ -380,8 +382,8 @@ services:
     container_name: kafka-connect-ui
     hostname: kafka-connect-ui
     labels:
-      platys.webui.title: Kafka Connect UI
-      platys.webui.url: http://${PUBLIC_IP}:28103
+      com.platys.webui.title: Kafka Connect UI
+      com.platys.webui.url: http://${PUBLIC_IP}:28103
     depends_on:
       - kafka-connect-1
     ports:
@@ -398,8 +400,8 @@ services:
     container_name: cmak
     hostname: cmak
     labels:
-      platys.webui.title: Cluster Manager for Apache Kafka UI
-      platys.webui.url: http://${PUBLIC_IP}:28104
+      com.platys.webui.title: Cluster Manager for Apache Kafka UI
+      com.platys.webui.url: http://${PUBLIC_IP}:28104
     depends_on:
       - zookeeper-1
       - kafka-1
@@ -420,8 +422,8 @@ services:
     container_name: akhq
     hostname: akhq
     labels:
-      platys.webui.title: Apache Kafka AQ UI
-      platys.webui.url: http://${PUBLIC_IP}:28107
+      com.platys.webui.title: Apache Kafka AQ UI
+      com.platys.webui.url: http://${PUBLIC_IP}:28107
     ports:
       - 28107:8080
     environment:
@@ -434,7 +436,10 @@ services:
               schema-registry:
                 url: "http://schema-registry-1:8081"
               connect:
-                url: "http://kafka-connect-1:8083"
+                - name: "kafka-connect-1"
+                  url: "http://kafka-connect-1:8083"
+                - name: "kafka-connect-2"
+                  url: "http://kafka-connect-1:8084"
     depends_on:
       - kafka-1
     volumes:
@@ -558,10 +563,10 @@ services:
     container_name: spark-history
     hostname: spark-history
     labels:
-      platys.webui.title: Spark History Server
-      platys.webui.url: http://${PUBLIC_IP}:28117
-      platys.restapi.title: Spark History Server
-      platys.restapi.url: http://${PUBLIC_IP}:28117/api/v1
+      com.platys.webui.title: Spark History Server
+      com.platys.webui.url: http://${PUBLIC_IP}:28117
+      com.platys.restapi.title: Spark History Server
+      com.platys.restapi.url: http://${PUBLIC_IP}:28117/api/v1
     expose:
       - 18080
     ports:
@@ -615,10 +620,10 @@ services:
     container_name: streamsets-1
     hostname: streamsets-1
     labels:
-      platys.webui.title: StreamSets Data Collector UI
-      platys.webui.url: http://${PUBLIC_IP}:18630
-      platys.restapi.title: StreamSets Data Collector REST API
-      platys.restapi.url: http://${PUBLIC_IP}:18630/collector/restapi
+      com.platys.webui.title: StreamSets Data Collector UI
+      com.platys.webui.url: http://${PUBLIC_IP}:18630
+      com.platys.restapi.title: StreamSets Data Collector REST API
+      com.platys.restapi.url: http://${PUBLIC_IP}:18630/collector/restapi
     ports:
       - 18630:18630
     environment:
@@ -643,8 +648,8 @@ services:
     container_name: zeppelin
     hostname: zeppelin
     labels:
-      platys.webui.title: Apache Zeppelin UI
-      platys.webui.url: http://${PUBLIC_IP}:28080
+      com.platys.webui.title: Apache Zeppelin UI
+      com.platys.webui.url: http://${PUBLIC_IP}:28080
     ports:
       - 28080:8080
       - 6060:6060
@@ -749,8 +754,8 @@ services:
     container_name: cloudbeaver
     hostname: cloudbeaver
     labels:
-      platys.webui.title: Cloudbeaver UI
-      platys.webui.url: http://${PUBLIC_IP}:8978
+      com.platys.webui.title: Cloudbeaver UI
+      com.platys.webui.url: http://${PUBLIC_IP}:8978
     ports:
       - 8978:8978
     restart: unless-stopped
@@ -760,8 +765,8 @@ services:
     hostname: presto-1
     container_name: presto-1
     labels:
-      platys.webui.title: Presto UI
-      platys.webui.url: http://${PUBLIC_IP}:28081
+      com.platys.webui.title: Presto UI
+      com.platys.webui.url: http://${PUBLIC_IP}:28081
     ports:
       - 28081:8080
     volumes:
@@ -785,8 +790,8 @@ services:
     container_name: minio
     hostname: minio
     labels:
-      platys.webui.title: MinIO UI
-      platys.webui.url: http://${PUBLIC_IP}:9000
+      com.platys.webui.title: MinIO UI
+      com.platys.webui.url: http://${PUBLIC_IP}:9000
     ports:
       - 9000:9000
     environment:
@@ -852,8 +857,8 @@ services:
     container_name: mqtt-ui
     hostname: mqtt-ui
     labels:
-      platys.webui.title: HiveMQ UI
-      platys.webui.url: http://${PUBLIC_IP}:28136
+      com.platys.webui.title: HiveMQ UI
+      com.platys.webui.url: http://${PUBLIC_IP}:28136
     ports:
       - 28136:80
     volumes:
@@ -865,8 +870,8 @@ services:
     container_name: wetty
     hostname: wetty
     labels:
-      platys.webui.title: WeTTY UI
-      platys.webui.url: http://${PUBLIC_IP}:3001
+      com.platys.webui.title: WeTTY UI
+      com.platys.webui.url: http://${PUBLIC_IP}:3001
     ports:
       - 3001:3000
     environment:
@@ -883,8 +888,8 @@ services:
     container_name: markdown-viewer
     hostname: markdown-viewer
     labels:
-      platys.webui.title: Markdown Viewer UI
-      platys.webui.url: http://${PUBLIC_IP}
+      com.platys.webui.title: Markdown Viewer UI
+      com.platys.webui.url: http://${PUBLIC_IP}
     ports:
       - 80:80
     volumes:
@@ -897,10 +902,11 @@ services:
     hostname: markdown-renderer
     environment:
       PUBLIC_IP: ${PUBLIC_IP}
+      DOCKER_HOST_IP: ${DOCKER_HOST_IP}
+      DATAPLATFORM_HOME: ${DATAPLATFORM_HOME}
     volumes:
       - ./documentation/templates:/templates
       - ./documentation/templates:/scripts
       - .:/variables
       - ./documentation:/output
       - ./data-transfer:/data-transfer
-    restart: unless-stopped
