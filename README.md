@@ -1,16 +1,16 @@
 # Twitter Big Data & Fast Data Sample
 
-This sample shows how to retrieve live twitter data and process it using both a batch processing pipeline, storing the data first in object storage as well as a stream analytics pipeline, where the data is analyzed without storing it at all. 
+This sample shows how to retrieve live twitter data and process it using both a batch processing pipeline, storing the data first in object storage as well as a stream analytics pipeline, where the data is analysed without storing it at all. 
 
 ## Ingesting Twitter Data into Kafka
 
-In the 1st step, we will be using StreamSets Data Collector to consume live data from Twitter and publish the tweets retrieved into a Kafka topic.
+In the 1st step, we will be using [StreamSets Data Collector](https://streamsets.com/products/dataops-platform/data-collector/) to consume live data from Twitter and publish the tweets retrieved into a Kafka topic.
 
 ![Alt Image Text](./images/use-case-step1.png "Use Case Step 1")
 
 Navigate to <http://dataplatform:18630> to open StreamSets and create a new pipeline. 
 
-Add a `HTTP Client` orgin and a `Kafka Producer` destination.
+Add a `HTTP Client` origin and a `Kafka Producer` destination.
 
 For the `HTTP Client` configure these properties:
 
@@ -33,13 +33,13 @@ For the `Kafka Producer` configure these properties:
 
 Create the Kafka Topic using the command line
 
-```
+```bash
 docker exec -ti kafka-1 kafka-topics --create --topic tweet-json --partitions 8 --replication-factor 3 --zookeeper zookeeper-1:2181
 ```
 
 To check for message, let's start a console consumer using the `kafkacat` utility. We can either have `kafkacat` installed locally or use the containerized version which is part of the platform.
 
-```
+```bash
 docker exec -ti kafkacat kafkacat -b kafka-1:19092 -t tweet-json
 ```
 
@@ -47,13 +47,13 @@ Start the pipeline in StreamSets.
 
 ## Moving Data from Kafka to S3 compliant Object Storage
 
-In the 2nd step, we will be using StreamSets Data Collector to consume the data we have previously written to the Kafka topic and store it in minIO Object Storage (which is S3 compliant).
+In the 2nd step, we will be using [StreamSets Data Collector](https://streamsets.com/products/dataops-platform/data-collector/) to consume the data we have previously written to the Kafka topic and store it in minIO Object Storage (which is S3 compliant).
 
 ![Alt Image Text](./images/use-case-step2.png "Use Case Step 2")
 
 Navigate to <http://dataplatform:18630> to open StreamSets and create a new pipeline. 
 
-Add a `Kafka Consumer` orgin and a `Amazon S3` destination.
+Add a `Kafka Consumer` origin and a `Amazon S3` destination.
 
 For the `Kafka Consumer` configure these properties:
 
@@ -87,7 +87,7 @@ For the `Amazon S3` configure these properties (as the MinIO is part of the self
 
 Before we can now start the pipeline, we have to create the bucket in MinIO object storage. We can either do that in the MinIO Browser or through the s3cmd available in the `awscli` service. 
 
-```
+```bash
 docker exec -ti awscli s3cmd mb s3://tweet-bucket
 ```
 
@@ -97,7 +97,7 @@ Navigate to the MinIO Browser on <http://dataplatform:9000> and check that the b
 
 ## Processing Tweets in real-time using ksqlDB
 
-In the 3rd step, we will be using a Stream Analytics component called ksqlDB to process the tweets form the `tweets-json` Kafka topic in real-time. ksqlDB offers a familiar SQL-like dialect, which we can use to query from data streams. 
+In the 3rd step, we will be using a Stream Analytics component called [ksqlDB](https://ksqldb.io/) to process the tweets form the `tweets-json` Kafka topic in real-time. ksqlDB offers a familiar SQL-like dialect, which we can use to query from data streams. 
 
 ![Alt Image Text](./images/use-case-step3.png "Use Case Step 3")
 
@@ -130,7 +130,7 @@ We don't map all the properties of the tweet, only some we are interested in.
 
 Now with the STREAM in place, we can use the SELECT statement to query from it
 
-```
+```sql
 SELECT * FROM tweet_json_s EMIT CHANGES;
 ```
 
@@ -138,13 +138,13 @@ We have to specify the emit changes, as we are querying from a stream and by tha
 
 We can also selectively only return the data we are interested in, i.e. the `id`, the `text` and the `source` fields.
 
-```
+```sql
 SELECT id, text, source FROM tweet_json_s EMIT CHANGES;
 ```
 
 Let's work with some nested fields. Inside the `entities` structure there is a `user_mentions` array, which holds all the users being mentioned in a tweet. 
 
-```
+```sql
 SELECT text, entities->user_mentions 
 FROM tweet_json_s 
 EMIT CHANGES;
@@ -152,7 +152,7 @@ EMIT CHANGES;
 
 With that we can easily check the array for all the tweets where `@realDonaldTrump` is mentioned
 
-```
+```sql
 SELECT id
 		, text 
 FROM tweet_json_s 
@@ -167,7 +167,7 @@ Let's say we want to produce trending hashtags over a given time. In KSQL, we al
 
 In order to use that, we first have to flatten the array, so we only have one hashtag per result. We can do that using the `EXPLODE` function
 
-```
+```sql
 SELECT id
 	, text
 	, EXPLODE(entities->hashtags)->text AS hashtag
@@ -205,27 +205,27 @@ By using the `EMIT FINAL`, we specify that we only want to get a result at the e
 
 ## Processing Tweets using Apache Spark
 
-In the 4th step, we will be using Apache Spark to process the tweets we have stored in object storage. We will be using Apache Zeppelin for executing the Apache Spark statements in an "ad-hoc" fashion.
+In the 4th step, we will be using [Apache Spark](https://spark.apache.org/) to process the tweets we have stored in object storage. We will be using Apache Zeppelin for executing the Apache Spark statements in an "ad-hoc" fashion.
 
 ![Alt Image Text](./images/use-case-step4.png "Use Case Step 4")
 
 Navigate to <http://dataplatform:28080> to open Apache Zeppelin and login as user `admin` with password `abc123!`. Create a new notebook using the **Create new note** link. 
 
-Now let's read all the data we have stored to Minio object storage so far, using the `spark.read.json` command
+Now let's read all the data we have stored to MinIO object storage so far, using the `spark.read.json` command
 
-```
+```scala
 val tweets = spark.read.json("s3a://tweets/raw/")
 ```
 
 Spark returns the result as a Data Frame, which is backed by a schema, derived from the JSON structure. We can use the `printSchema` method on the data frame to view the schema.
 
-```
+```scala
 tweets.printSchema
 ```
 
 the schema is quite lengthy, here only the start and the end is shown, leaving out the details in the middle
 
-```
+```scala
 root
  |-- contributors: string (nullable = true)
  |-- coordinates: struct (nullable = true)
@@ -302,25 +302,25 @@ We can see that the a tweet has a hierarchical structure and that the tweet text
 
 Let`s see 10 records of the data frame
 
-```
+```scala
 tweets.show(10)
 ```
 
 We can also ask the data frame for the number of records, using the `count` method
 
-```
+```scala
 tweets.count()
 ```
 
 Now let's use the `cache` method to cache the data in memory, so that further queries are more efficient
 
-```
+```scala
 tweets.cache()
 ```
 
 Spark SQL allows to use the SQL language to work on the data in a data frame. We can register a table on a data frame.
  
-```
+```scala
 tweets.createOrReplaceTempView("tweets")
 ```
 
@@ -328,21 +328,21 @@ With the `tweets` table registered, we can use it in a SELECT statement. Inside 
 
 But with Zeppelin, there is also the possibility to use the `%sql` directive to directly work on the tables registered
 
-```
+```sql
  %sql
 SELECT * FROM tweets
 ```
 
 We can also do the count using SQL
 
-```
+```sql
 %sql
 SELECT COUNT(*) FROM tweets
 ```
 
 and there are many SQL functions available and we can also work on the hierarchical data, such as `entities.hashtags.text`. First let's see only tweets, which have at least one hashtag
  
-```
+```sql
 %sql
 SELECT text, entities.hashtags.text 
 FROM tweets 
@@ -351,7 +351,7 @@ WHERE SIZE(entities.hashtags) > 0
 
 We can use that statement in a so called inline view and count how often a hashtag has been mentioned over all and sort it descending.
 
-```
+```sql
 %sql
 SELECT hashtag, COUNT(*) nof 
 FROM (
@@ -363,7 +363,7 @@ ORDER BY nof desc
 
 Let's say this is the result we want to make available. We can now turn it into a spark statement by placing it inside the `spark.sql` method call. 
 
-```
+```scala
 val resultDf = spark.sql("""
 select hashtag, count(*) nof from (
 select lower(hashtag.text) as hashtag from tweets lateral view explode(entities.hashtags) hashtags as hashtag ) group by hashtag
@@ -373,7 +373,7 @@ order by nof desc
 
 The result of the `spark.sql` is another, new data frame, which we can either do further processing on, or store it using the `write.parquet` method
 
-```
+```scala
 resultDf.write.parquet("s3a://tweet-bucket/result/hashtag-counts")
 ```
 
@@ -381,7 +381,7 @@ We store it in Minio object storage in the same bucket as the raw data, but use 
 
 ## Using Presto to query the result in object storage
 
-In this last step, we are using Presto SQL engine to make the result data we have created in the previous step available for querying over SQL. 
+In this last step, we are using [Presto SQL](https://prestosql.io/) engine to make the result data we have created in the previous step available for querying over SQL. 
 
 ![Alt Image Text](./images/use-case-step5.png "Use Case Step 5")
 
@@ -389,13 +389,13 @@ To make the data in object storage usable in Presto, we first have to create the
 
 We first start the Hive Metastore CLI
 
-```
+```bash
 docker exec -ti hive-metastore hive
 ```
 
 and create a database and then switch to that database
 
-```
+```sql
 CREATE DATABASE twitter_data;
 USE twitter_data;
 ```
@@ -404,7 +404,7 @@ Databases allow to group similar data.
 
 Inside the database, we can now create a table, which wraps the data in object storage. We create a table for the data in the `result/hashtag-counts` folder
 
-```
+```sql
 DROP TABLE IF EXISTS hashtag_count_t;
 CREATE EXTERNAL TABLE hashtag_count_t (hashtag string
 									 , nof integer)
@@ -415,31 +415,31 @@ With the table in place, we can quit the CLI using the `exit;` command.
 
 Now let's start the Presto CLI and connect to the `presto-1` service
 
-```
+```bash
 docker exec -ti presto-cli presto --server presto-1:8080 --catalog minio
 ```
 
 We then switch to the `minio` catalog and the `twitter_data` database, which matches the name of the database we have created in the Hive Metastore before
 
-```
+```sql
 use minio.twitter_data;
 ```
 
 A show tables should show the one table `hashtag_count_t` we have created before
 
-```
+```sql
 show tables;
 ```
 
 Now we can use `SELECT` to query from the table
 
-```
+```sql
 SELECT * FROM hashtag_count_t;
 ```
 
 We can also count how many hashtags we have seen so far
 
-```
+```sql
 SELECT count(*) FROM hashtag_count_t;
 ```
 
