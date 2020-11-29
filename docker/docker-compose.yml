@@ -761,7 +761,7 @@ services:
     restart: unless-stopped
   #  ================================== Presto ========================================== #
   presto-1:
-    image: starburstdata/presto:344-e
+    image: starburstdata/presto:346-e
     hostname: presto-1
     container_name: presto-1
     labels:
