@@ -214,7 +214,7 @@ Navigate to <http://dataplatform:28080> to open Apache Zeppelin and login as use
 Now let's read all the data we have stored to MinIO object storage so far, using the `spark.read.json` command
 
 ```scala
-val tweets = spark.read.json("s3a://tweets/raw/")
+val tweets = spark.read.json("s3a://tweet-bucket/raw/")
 ```
 
 Spark returns the result as a Data Frame, which is backed by a schema, derived from the JSON structure. We can use the `printSchema` method on the data frame to view the schema.
