@@ -300,28 +300,28 @@ root
 
 We can see that the a tweet has a hierarchical structure and that the tweet text it self, the `text` field is only one part of much more information.
 
-Let`s see 10 records of the data frame
+Now let's use the `cache` method to cache the data in memory, so that further queries are more efficient
 
 ```scala
-tweets.show(10)
+val tweetsCached = tweets.cache()
+```
+
+Let`s see one record of the data frame
+
+```scala
+tweetsCached.show(1)
 ```
 
 We can also ask the data frame for the number of records, using the `count` method
 
 ```scala
-tweets.count()
-```
-
-Now let's use the `cache` method to cache the data in memory, so that further queries are more efficient
-
-```scala
-tweets.cache()
+tweetsCached.count()
 ```
 
 Spark SQL allows to use the SQL language to work on the data in a data frame. We can register a table on a data frame.
  
 ```scala
-tweets.createOrReplaceTempView("tweets")
+tweetsCached.createOrReplaceTempView("tweets")
 ```
 
 With the `tweets` table registered, we can use it in a SELECT statement. Inside spark, you can use the `spark.sql()` to execute the SELECT statement.
