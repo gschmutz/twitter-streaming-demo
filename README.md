@@ -406,8 +406,7 @@ Inside the database, we can now create a table, which wraps the data in object s
 
 ```sql
 DROP TABLE IF EXISTS hashtag_count_t;
-CREATE EXTERNAL TABLE hashtag_count_t (hashtag string
-									 , nof integer)
+CREATE EXTERNAL TABLE hashtag_count_t (hashtag string, nof integer)
 STORED AS PARQUET LOCATION 's3a://tweet-bucket/result/hashtag-counts';  
 ```
 
