@@ -1,16 +1,27 @@
-# Services
-| service name | UI | URL |
+# List of Services
+
+| Service Name | Web UI | Rest API |
 |-------------- |------|------------
 {%- for service in services.items() | sort() %}
-| {{ service[0] }}
+| {{ service[0] }}|
   {%- if service[1].labels -%}
   {%- for label,value in service[1].labels.items() -%}
     {%- if label == 'com.platys.webui.title' -%}
-| {{value}}
     {%- endif -%}
+  {%- endfor -%}
+  {%- for label,value in service[1].labels.items() -%}
     {%- if label == 'com.platys.webui.url' -%}
+ <{{ value | replace ('${PUBLIC_IP}', environ('PUBLIC_IP'))}}>
+    {%- endif -%}
+  {%- endfor -%}
+  {%- for label,value in service[1].labels.items() -%}
+    {%- if label == 'com.platys.restapi.title' -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- for label,value in service[1].labels.items() -%}
+    {%- if label == 'com.platys.restapi.url' -%}
 | <{{ value | replace ('${PUBLIC_IP}', environ('PUBLIC_IP'))}}>
     {%- endif -%}
   {%- endfor -%}
-  {%- endif -%}
+ {%- endif -%}
 {%- endfor -%}
