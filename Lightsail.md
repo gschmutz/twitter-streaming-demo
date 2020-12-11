@@ -31,6 +31,8 @@ export PLATYS_VERSION=2.4.0
 export NETWORK_NAME=eth0
 export USERNAME=ubuntu
 export PASSWORD=ubuntu
+export AWS_ACCESS_KEY=
+export AWS_SECRET_ACCESS_KEY=
 
 # Prepare Environment Variables 
 export PUBLIC_IP=$(curl ipinfo.io/ip)
@@ -71,7 +73,7 @@ sudo sysctl -w vm.max_map_count=262144
 # Get the project
 cd /home/${USERNAME} 
 git clone https://github.com/${GITHUB_OWNER}/${GITHUB_PROJECT}
-chown -R ${USERNAME}:${PASSWORD} ${GITHUB_PROJECT}
+chown -R ${USERNAME}:${USERNAME} ${GITHUB_PROJECT}
 
 cd /home/${USERNAME}/${GITHUB_PROJECT}/${DATAPLATFORM_HOME}
 
@@ -80,7 +82,12 @@ printf "export PUBLIC_IP=$PUBLIC_IP\n" >> /home/$USERNAME/.bash_profile
 printf "export DOCKER_HOST_IP=$DOCKER_HOST_IP\n" >> /home/$USERNAME/.bash_profile
 printf "export DATAPLATFORM_HOME=$PWD\n" >> /home/$USERNAME/.bash_profile
 printf "\n" >> /home/$USERNAME/.bash_profile
-sudo chown ${USERNAME}:${PASSWORD} /home/$USERNAME/.bash_profile
+sudo chown ${USERNAME}:${USERNAME} /home/$USERNAME/.bash_profile
+
+# create the .env file
+rm $PWD/.env
+printf "export PLATYS_AWS_ACCESS_KEY=$AWS_ACCESS_KEY\n" >> $PWD/.env
+printf "export PLATYS_AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY\n" >> $PWD/.env
 
 # Startup Environment
 docker-compose up -d
