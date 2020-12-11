@@ -86,8 +86,8 @@ sudo chown ${USERNAME}:${USERNAME} /home/$USERNAME/.bash_profile
 
 # create the .env file
 rm $PWD/.env
-printf "export PLATYS_AWS_ACCESS_KEY=$AWS_ACCESS_KEY\n" >> $PWD/.env
-printf "export PLATYS_AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY\n" >> $PWD/.env
+printf "PLATYS_AWS_ACCESS_KEY=$AWS_ACCESS_KEY\n" >> $PWD/.env
+printf "PLATYS_AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY\n" >> $PWD/.env
 
 # Startup Environment
 docker-compose up -d
