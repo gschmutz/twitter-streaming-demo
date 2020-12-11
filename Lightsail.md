@@ -23,15 +23,18 @@ Scroll down to **Launch script** and add the following script. Make sure to spec
 Optionally change the password from the default value of `ubuntu` to a more secure one. 
 
 ```
-export PLATFORM_FLAVOUR=minio
+export GITHUB_PROJECT=hadoop-spark-workshop
+export GITHUB_OWNER=gschmutz
+export DATAPLATFORM_HOME=docker
 export DOCKER_COMPOSE_VERSION=1.25.3
 export PLATYS_VERSION=2.4.0
+export NETWORK_NAME=eth0
 export USERNAME=ubuntu
 export PASSWORD=ubuntu
 
 # Prepare Environment Variables 
 export PUBLIC_IP=$(curl ipinfo.io/ip)
-export DOCKER_HOST_IP=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
+export DOCKER_HOST_IP=$(ip addr show ${NETWORK_NAME} | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
 
 # allow login by password
 sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
@@ -67,10 +70,10 @@ sudo sysctl -w vm.max_map_count=262144
 
 # Get the project
 cd /home/${USERNAME} 
-git clone https://github.com/gschmutz/twitter-streaming-demo.git
-chown -R ${USERNAME}:${PASSWORD} twitter-streaming-demo
+git clone https://github.com/${GITHUB_OWNER}/${GITHUB_PROJECT}
+chown -R ${USERNAME}:${PASSWORD} ${GITHUB_PROJECT}
 
-cd /home/${USERNAME}/twitter-streaming-demo/docker
+cd /home/${USERNAME}/${GITHUB_PROJECT}/${DATAPLATFORM_HOME}
 
 # Prepare Environment Variables into .bash_profile file
 printf "export PUBLIC_IP=$PUBLIC_IP\n" >> /home/$USERNAME/.bash_profile
