@@ -459,43 +459,6 @@ services:
       - ./plugins/spark/jars:/extra-jars
       - ./container-volume/spark/logs/:/var/log/spark/logs
     restart: unless-stopped
-  spark-thriftserver:
-    image: trivadis/apache-spark-thriftserver:3.0.1-hadoop3.2
-    container_name: spark-thriftserver
-    hostname: spark-thriftserver
-    ports:
-      - 28118:10000
-    env_file:
-      - ./conf/hadoop.env
-    environment:
-      CORE_CONF_fs_s3a_endpoint: http://minio-1:9000
-      CORE_CONF_fs_s3a_path_style_access: 'true'
-      HIVE_SITE_CONF_fs_s3a_endpoint: http://minio-1:9000
-      HIVE_SITE_CONF_fs_s3a_access_key: V42FCGRVMK24JJ8DHUYG
-      HIVE_SITE_CONF_fs_s3a_secret_key: bKhWxVF3kQoLY9kFmt91l+tDrEoZjqnWXzY9Eza
-      HIVE_SITE_CONF_fs_s3a_path_style_access: 'true'
-      HIVE_SITE_CONF_fs_s3a_impl: org.apache.hadoop.fs.s3a.S3AFileSystem
-      SPARK_DEFAULTS_CONF_spark_hadoop_fs_s3a_impl: org.apache.hadoop.fs.s3a.S3AFileSystem
-      SPARK_DEFAULTS_CONF_spark_hadoop_fs_s3a_endpoint: http://minio-1:9000
-      SPARK_DEFAULTS_CONF_spark_hadoop_fs_s3a_path_style_access: 'true'
-      SPARK_DEFAULTS_CONF_spark_jars_repositories:
-      SPARK_DEFAULTS_CONF_spark_jars_packages: com.github.mrpowers:spark-daria_2.12:1.0.0,org.apache.spark:spark-avro_2.12:3.0.1,io.delta:delta-core_2.12:0.8.0
-      SPARK_DEFAULTS_CONF_spark_jars_excludes:
-      SPARK_DEFAULTS_CONF_spark_jars:
-      SPARK_DEFAULTS_CONF_spark_jars_ivySettings:
-      SPARK_DEFAULTS_CONF_spark_sql_catalogImplementation: in-memory
-      CORE_CONF_fs_defaultFS: s3a://admin-bucket
-      SPARK_DEFAULTS_CONF_spark_sql_warehouse_dir: s3a://admin-bucket/hive/warehouse
-      SPARK_DEFAULTS_CONF_spark_yarn_dist_files: /spark/conf/hive-site.xml
-      SPARK_DEFAULTS_CONF_spark_driver_extraJavaOptions:
-      SPARK_DEFAULTS_CONF_spark_executor_extraJavaOptions:
-    volumes:
-      - ./data-transfer:/data-transfer
-      - ./plugins/spark/jars:/extra-jars
-      - ./container-volume/spark/logs/:/var/log/spark/logs
-      - ./scripts/docker/wait-for-it.sh:/usr/src/app/wait-for-it.sh
-    command: [/usr/src/app/wait-for-it.sh, hive-metastore:9083, --timeout=120, --, ./thriftserver.sh]
-    restart: unless-stopped
   #  ================================== StreamSets DataCollector ========================================== #
   streamsets-1:
     image: streamsets/datacollector:3.22.2
@@ -736,6 +699,37 @@ services:
     volumes:
       - ./data-transfer:/data-transfer
     command: [/bin/bash, -c, /usr/share/kibana/bin/kibana-plugin remove x-pack; /usr/local/bin/kibana-docker]
+    restart: unless-stopped
+  #  ================================== Trino ========================================== #
+  trino-1:
+    image: starburstdata/starburst-enterprise:356-e.1
+    hostname: trino-1
+    container_name: trino-1
+    labels:
+      com.platys.webui.title: Trino UI
+      com.platys.webui.url: http://${PUBLIC_IP}:28082
+    ports:
+      - 28082:8080
+    environment:
+      S3_ENDPOINT: http://minio-1:9000
+      S3_AWS_ACCESS_KEY: V42FCGRVMK24JJ8DHUYG
+      S3_AWS_SECRET_KEY: bKhWxVF3kQoLY9kFmt91l+tDrEoZjqnWXzY9Eza
+      S3_PATH_STYLE_ACCESS: 'true'
+      # this is only generated to keep the structure valid if no other env variables are present
+      IGNORE: ignore
+    volumes:
+      - ./data-transfer:/data-transfer
+      - ./conf/starburstdata/single/config.properties:/usr/lib/presto/etc/config.properties
+      - ./conf/starburstdata/cluster/node.properties:/usr/lib/presto/etc/node.properties
+      - ./conf/starburstdata/catalog/minio.properties:/usr/lib/presto/etc/catalog/minio.properties
+    restart: unless-stopped
+  trino-cli:
+    image: trivadis/trino-cli:latest
+    hostname: trino-cli
+    container_name: trino-cli
+    volumes:
+      - ./data-transfer:/data-transfer
+    tty: true
     restart: unless-stopped
   #  ================================== Minio ========================================== #
   minio-1:

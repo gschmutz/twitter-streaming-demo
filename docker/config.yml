@@ -209,7 +209,7 @@
       SPARK_executor_memory:
       # misc spark 'addons'
       SPARK_HISTORY_enable: true
-      SPARK_THRIFT_enable: true
+      SPARK_THRIFT_enable: false
       #
       # ===== Apache Livy ========
       #
@@ -569,7 +569,7 @@
       #
       # ===== Trino ========
       #
-      TRINO_enable: false
+      TRINO_enable: true
       # "single" or "cluster" install
       TRINO_install: single
       TRINO_workers: 3

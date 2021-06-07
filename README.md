@@ -203,6 +203,13 @@ EMIT FINAL;
 
 By using the `EMIT FINAL`, we specify that we only want to get a result at the end of the window.
 
+## Storing Tweets in Elasticsearch
+
+In the 4th step, we will be using the [Elastisearch](https://www.elastic.co/elastic-stack) NoSQL datastore to persist the tweets for later retrieval by Kibana. Elasticsearch is popular for its text-based search capabilities.
+
+
+
+
 ## Processing Tweets using Apache Spark
 
 In the 4th step, we will be using [Apache Spark](https://spark.apache.org/) to process the tweets we have stored in object storage. We will be using Apache Zeppelin for executing the Apache Spark statements in an "ad-hoc" fashion.
