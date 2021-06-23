@@ -218,28 +218,6 @@ services:
       - |
         while [ 1 -eq 1 ];do sleep 60;done
     restart: unless-stopped
-  #  ================================== Cluster Manager for Apache Kafka (CMAK) ========================================== #
-  cmak:
-    image: trivadis/cmak:latest
-    container_name: cmak
-    hostname: cmak
-    labels:
-      com.platys.webui.title: Cluster Manager for Apache Kafka UI
-      com.platys.webui.url: http://${PUBLIC_IP}:28104
-    depends_on:
-      - zookeeper-1
-      - kafka-1
-    ports:
-      - 28104:9000
-    environment:
-      ZK_HOSTS: zookeeper-1:2181
-      APPLICATION_SECRET: abc123!
-      KAFKA_MANAGER_AUTH_ENABLED: 'false'
-      KAFKA_MANAGER_USERNAME: admin
-      KAFKA_MANAGER_PASSWORD: abc123!
-    volumes:
-      - ./data-transfer:/data-transfer
-    restart: unless-stopped
   #  ================================== Apache Kafka HQ (AKHQ) ========================================== #
   akhq:
     image: tchiotludo/akhq:latest
@@ -622,18 +600,6 @@ services:
       http.cors.allow-origin: http://dejavu:1358,http://dataplatform:28125,http://analyticsplatform:28125,http://${PUBLIC_IP}:28125,http://${DOCKER_HOST_IP}:28125,http://127.0.0.1:1358
       http.cors.allow-headers: X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
       http.cors.allow-credentials: 'true'
-    volumes:
-      - ./data-transfer:/data-transfer
-    restart: unless-stopped
-  dejavu:
-    image: appbaseio/dejavu:latest
-    container_name: dejavu
-    hostname: dejuvu
-    labels:
-      com.platys.webui.title: Elasticsearch Dejavu UI
-      com.platys.webui.url: http://${PUBLIC_IP}:28125
-    ports:
-      - 28125:1358
     volumes:
       - ./data-transfer:/data-transfer
     restart: unless-stopped

@@ -142,7 +142,7 @@
       #
       # ===== Cluster Manager for Apache Kafka ========
       #
-      KAFKA_CMAK_enable: true
+      KAFKA_CMAK_enable: false
       KAFKA_CMAK_auth_enabled: "'false'"
       KAFKA_CMAK_username: admin
       KAFKA_CMAK_password: abc123!
@@ -436,7 +436,7 @@
       ELASTICSEARCH_enable: true
       # one of 'oss', 'elastic',
       ELASTICSEARCH_edition: 'oss'
-      DEJAVU_enable: true
+      DEJAVU_enable: false
       CEREBRO_enable: false
       ELASTICHQ_enable: false
       #
