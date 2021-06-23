@@ -193,52 +193,6 @@ services:
       - ./data-transfer:/data-transfer
       - ./plugins/ksql:/etc/ksqldb/ext
     restart: unless-stopped
-  ksqldb-server-2:
-    image: confluentinc/ksqldb-server:0.18.0
-    hostname: ksqldb-server-2
-    container_name: ksqldb-server-2
-    labels:
-      com.platys.restapi.title: ksqlDB Server REST API
-      com.platys.restapi.url: http://${PUBLIC_IP}:8089
-    ports:
-      - 8089:8088
-      - 1096:1095
-    environment:
-      KSQL_LOG4J_ROOT_LOGLEVEL: INFO
-      KSQL_LOG4J_OPTS: -Dlog4j.configuration=file:/etc/ksqldb/log4j.properties
-      KSQL_LOG4J_PROCESSING_LOG_BROKERLIST: kafka-1:19092,kafka-2:19093,kafka-3:19094
-      KSQL_LOG4J_PROCESSING_LOG_TOPIC: demo_processing_log
-      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_NAME: demo_processing_log
-      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_REPLICATION_FACTOR: 3
-      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: 'true'
-      KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: 'true'
-      # For Demo purposes: improve resource utilization and avoid timeouts
-      KSQL_KSQL_STREAMS_NUM_STREAM_THREADS: 1
-      KSQL_PRODUCER_ENABLE_IDEMPOTENCE: 'true'
-      KSQL_APPLICATION_ID: kafka-demo
-      KSQL_KSQL_SERVICE_ID: kafka-demo
-      KSQL_HOST_NAME: ksqldb-server-2
-      KSQL_LISTENERS: http://0.0.0.0:8088
-      KSQL_BOOTSTRAP_SERVERS: kafka-1:19092,kafka-2:19093,kafka-3:19094
-      KSQL_CACHE_MAX_BYTES_BUFFERING: 0
-      KSQL_RESPONSE_HTTP_HEADERS_CONFIG: ''
-      KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry-1:8081
-      KSQL_KSQL_INTERNAL_TOPIC_REPLICAS: 3
-      KSQL_KSQL_STREAMS_REPLICATION_FACTOR: 3
-      KSQL_KSQL_QUERY_PULL_METRICS_ENABLED: 'true'
-      KSQL_KSQL_HIDDEN_TOPICS: ^_.*,default_ksql_processing_log
-#      KSQL_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
-#      KSQL_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
-      KSQL_KSQL_SUPPRESS_ENABLED: 'True'
-      KSQL_KSQL_SUPPRESS_BUFFER_SIZE_BYTES: '-1'
-      KSQL_KSQL_QUERY_PULL_TABLE_SCAN_ENABLED: 'False'
-      KSQL_CONFIG_DIR: /etc/ksql
-      KSQL_KSQL_EXTENSION_DIR: /etc/ksqldb/ext/
-      KSQL_JMX_OPTS: -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=1095 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.rmi.port=1095
-    volumes:
-      - ./data-transfer:/data-transfer
-      - ./plugins/ksql:/etc/ksqldb/ext
-    restart: unless-stopped
   # Access the cli by running:
   # > docker exec -it ksqldb-cli ksql http://ksqldb-server-1:8088
   ksqldb-cli:
@@ -413,39 +367,6 @@ services:
       SPARK_DEFAULTS_CONF_spark_jars_excludes:
       SPARK_DEFAULTS_CONF_spark_jars:
       SPARK_DEFAULTS_CONF_spark_jars_ivySettings:
-      SPARK_DEFAULTS_CONF_spark_sql_catalogImplementation: in-memory
-      CORE_CONF_fs_defaultFS: s3a://admin-bucket
-      SPARK_DEFAULTS_CONF_spark_sql_warehouse_dir: s3a://admin-bucket/hive/warehouse
-      SPARK_DEFAULTS_CONF_spark_yarn_dist_files: /spark/conf/hive-site.xml
-      SPARK_DEFAULTS_CONF_spark_driver_extraJavaOptions:
-      SPARK_DEFAULTS_CONF_spark_executor_extraJavaOptions:
-    volumes:
-      - ./data-transfer:/data-transfer
-      - ./plugins/spark/jars:/extra-jars
-      - ./container-volume/spark/logs/:/var/log/spark/logs
-    restart: unless-stopped
-  spark-history:
-    image: trivadis/apache-spark-worker:3.0.1-hadoop3.2
-    command: /spark/bin/spark-class org.apache.spark.deploy.history.HistoryServer
-    container_name: spark-history
-    hostname: spark-history
-    labels:
-      com.platys.webui.title: Spark History Server
-      com.platys.webui.url: http://${PUBLIC_IP}:28117
-      com.platys.restapi.title: Spark History Server
-      com.platys.restapi.url: http://${PUBLIC_IP}:28117/api/v1
-    expose:
-      - 18080
-    ports:
-      - 28117:18080
-    environment:
-      SPARK_DEFAULTS_CONF_spark_jars_repositories:
-      SPARK_DEFAULTS_CONF_spark_jars_packages: com.github.mrpowers:spark-daria_2.12:1.0.0,org.apache.spark:spark-avro_2.12:3.0.1,io.delta:delta-core_2.12:0.8.0
-      SPARK_DEFAULTS_CONF_spark_jars_excludes:
-      SPARK_DEFAULTS_CONF_spark_jars_ivySettings:
-      SPARK_DEFAULTS_CONF_spark_hadoop_fs_s3a_impl: org.apache.hadoop.fs.s3a.S3AFileSystem
-      SPARK_DEFAULTS_CONF_spark_hadoop_fs_s3a_endpoint: http://minio-1:9000
-      SPARK_DEFAULTS_CONF_spark_hadoop_fs_s3a_path_style_access: 'true'
       SPARK_DEFAULTS_CONF_spark_sql_catalogImplementation: in-memory
       CORE_CONF_fs_defaultFS: s3a://admin-bucket
       SPARK_DEFAULTS_CONF_spark_sql_warehouse_dir: s3a://admin-bucket/hive/warehouse
