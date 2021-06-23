@@ -12,7 +12,7 @@ networks:
 services:
   #  ================================== Zookeeper ========================================== #
   zookeeper-1:
-    image: confluentinc/cp-zookeeper:6.1.0
+    image: confluentinc/cp-zookeeper:6.2.0
     container_name: zookeeper-1
     hostname: zookeeper-1
     ports:
@@ -28,7 +28,7 @@ services:
     restart: unless-stopped
 #  ================================== Kafka ========================================== #
   kafka-1:
-    image: confluentinc/cp-kafka:6.1.0
+    image: confluentinc/cp-kafka:6.2.0
     container_name: kafka-1
     hostname: kafka-1
     depends_on:
@@ -41,11 +41,11 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_BROKER_RACK: dc1
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_INTERNAL:PLAINTEXT,LISTENER_DOCKERHOST:PLAINTEXT,LISTENER_EXTERNAL:PLAINTEXT
       KAFKA_LISTENERS: LISTENER_INTERNAL://kafka-1:19092,LISTENER_DOCKERHOST://kafka-1:29092,LISTENER_EXTERNAL://kafka-1:9092
       KAFKA_ADVERTISED_LISTENERS: LISTENER_INTERNAL://kafka-1:19092,LISTENER_DOCKERHOST://localhost:29092,LISTENER_EXTERNAL://${PUBLIC_IP:-127.0.0.1}:9092
-      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
@@ -61,7 +61,7 @@ services:
       - ./data-transfer:/data-transfer
     restart: unless-stopped
   kafka-2:
-    image: confluentinc/cp-kafka:6.1.0
+    image: confluentinc/cp-kafka:6.2.0
     container_name: kafka-2
     hostname: kafka-2
     depends_on:
@@ -74,11 +74,11 @@ services:
     environment:
       KAFKA_BROKER_ID: 2
       KAFKA_BROKER_RACK: dc1
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_INTERNAL:PLAINTEXT,LISTENER_DOCKERHOST:PLAINTEXT,LISTENER_EXTERNAL:PLAINTEXT
       KAFKA_LISTENERS: LISTENER_INTERNAL://kafka-2:19093,LISTENER_DOCKERHOST://kafka-2:29093,LISTENER_EXTERNAL://kafka-2:9093
       KAFKA_ADVERTISED_LISTENERS: LISTENER_INTERNAL://kafka-2:19093,LISTENER_DOCKERHOST://localhost:29093,LISTENER_EXTERNAL://${PUBLIC_IP:-127.0.0.1}:9093
-      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
@@ -94,7 +94,7 @@ services:
       - ./data-transfer:/data-transfer
     restart: unless-stopped
   kafka-3:
-    image: confluentinc/cp-kafka:6.1.0
+    image: confluentinc/cp-kafka:6.2.0
     container_name: kafka-3
     hostname: kafka-3
     depends_on:
@@ -107,11 +107,11 @@ services:
     environment:
       KAFKA_BROKER_ID: 3
       KAFKA_BROKER_RACK: dc1
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_INTERNAL:PLAINTEXT,LISTENER_DOCKERHOST:PLAINTEXT,LISTENER_EXTERNAL:PLAINTEXT
       KAFKA_LISTENERS: LISTENER_INTERNAL://kafka-3:19094,LISTENER_DOCKERHOST://kafka-3:29094,LISTENER_EXTERNAL://kafka-3:9094
       KAFKA_ADVERTISED_LISTENERS: LISTENER_INTERNAL://kafka-3:19094,LISTENER_DOCKERHOST://localhost:29094,LISTENER_EXTERNAL://${PUBLIC_IP:-127.0.0.1}:9094
-      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
@@ -128,7 +128,7 @@ services:
     restart: unless-stopped
   #  ================================== Schema Registry ========================================== #
   schema-registry-1:
-    image: confluentinc/cp-schema-registry:6.1.0
+    image: confluentinc/cp-schema-registry:6.2.0
     hostname: schema-registry-1
     container_name: schema-registry-1
     labels:
@@ -177,7 +177,6 @@ services:
       KSQL_CACHE_MAX_BYTES_BUFFERING: 0
       KSQL_RESPONSE_HTTP_HEADERS_CONFIG: ''
       KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry-1:8081
-      KSQL_KSQL_SCHEMA_REGISTRY_BASIC_AUTH_CREDENTIALS_SOURCE: USER_INFO
       KSQL_KSQL_INTERNAL_TOPIC_REPLICAS: 3
       KSQL_KSQL_STREAMS_REPLICATION_FACTOR: 3
       KSQL_KSQL_QUERY_PULL_METRICS_ENABLED: 'true'
@@ -224,7 +223,6 @@ services:
       KSQL_CACHE_MAX_BYTES_BUFFERING: 0
       KSQL_RESPONSE_HTTP_HEADERS_CONFIG: ''
       KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry-1:8081
-      KSQL_KSQL_SCHEMA_REGISTRY_BASIC_AUTH_CREDENTIALS_SOURCE: USER_INFO
       KSQL_KSQL_INTERNAL_TOPIC_REPLICAS: 3
       KSQL_KSQL_STREAMS_REPLICATION_FACTOR: 3
       KSQL_KSQL_QUERY_PULL_METRICS_ENABLED: 'true'
@@ -459,6 +457,36 @@ services:
       - ./plugins/spark/jars:/extra-jars
       - ./container-volume/spark/logs/:/var/log/spark/logs
     restart: unless-stopped
+  #  ================================== Apache Hive Metastore ========================================== #
+  hive-metastore:
+    image: trivadis/apache-hive:3.1.2-postgresql-metastore-s3
+    container_name: hive-metastore
+    hostname: hive-metastore
+    ports:
+      - 9083:9083
+    env_file:
+      - ./conf/hadoop.env
+    environment:
+      CORE_CONF_fs_defaultFS: s3a://admin-bucket
+      CORE_CONF_fs_s3a_endpoint: http://minio-1:9000
+      CORE_CONF_fs_s3a_path_style_access: 'true'
+      HIVE_SITE_CONF_fs_s3a_endpoint: http://minio-1:9000
+      HIVE_SITE_CONF_fs_s3a_access_key: V42FCGRVMK24JJ8DHUYG
+      HIVE_SITE_CONF_fs_s3a_secret_key: bKhWxVF3kQoLY9kFmt91l+tDrEoZjqnWXzY9Eza
+      HIVE_SITE_CONF_fs_s3a_path_style_access: 'true'
+      HIVE_SITE_CONF_fs_s3a_impl: org.apache.hadoop.fs.s3a.S3AFileSystem
+      SERVICE_PRECONDITION: hive-metastore-db:5432
+    volumes:
+      - ./data-transfer:/data-transfer
+    command: /opt/hive/bin/hive --service metastore
+    restart: unless-stopped
+  hive-metastore-db:
+    image: trivadis/apache-hive-metastore-postgresql:3.1.0-postgres9.5.3
+    container_name: hive-metastore-db
+    hostname: hive-metastore-db
+    volumes:
+      - ./data-transfer:/data-transfer
+    restart: unless-stopped
   #  ================================== StreamSets DataCollector ========================================== #
   streamsets-1:
     image: streamsets/datacollector:3.22.2
@@ -473,7 +501,7 @@ services:
       - 18630:18630
     environment:
       SDC_OFFSET_DIRECTORY: /data/custom-offset-el
-      SDC_INSTALL_STAGES: streamsets-datacollector-apache-kafka_2_6-lib,streamsets-datacollector-aws-lib,streamsets-datacollector-azure-lib,streamsets-datacollector-groovy_2_4-lib,streamsets-datacollector-elasticsearch_7-lib,streamsets-datacollector-jdbc-lib
+      SDC_INSTALL_STAGES: streamsets-datacollector-apache-kafka_2_7-lib,streamsets-datacollector-aws-lib,streamsets-datacollector-azure-lib,streamsets-datacollector-groovy_2_4-lib,streamsets-datacollector-elasticsearch_7-lib,streamsets-datacollector-jdbc-lib
       SDC_INSTALL_ENTERPRISE_STAGES: ''
       SDC_JAVA_OPTS: -Xmx2g -Xms2g
       SDC_JAVA8_OPTS: -XX:+UseG1GC
@@ -702,7 +730,7 @@ services:
     restart: unless-stopped
   #  ================================== Trino ========================================== #
   trino-1:
-    image: starburstdata/starburst-enterprise:356-e.1
+    image: starburstdata/starburst-enterprise:358-e
     hostname: trino-1
     container_name: trino-1
     labels:
@@ -719,9 +747,9 @@ services:
       IGNORE: ignore
     volumes:
       - ./data-transfer:/data-transfer
-      - ./conf/starburstdata/single/config.properties:/usr/lib/presto/etc/config.properties
-      - ./conf/starburstdata/cluster/node.properties:/usr/lib/presto/etc/node.properties
-      - ./conf/starburstdata/catalog/minio.properties:/usr/lib/presto/etc/catalog/minio.properties
+      - ./conf/starburstdata/single/config.properties:/etc/starburst/config.properties
+      - ./conf/starburstdata/single/node.properties:/etc/starburst/node.properties
+      - ./conf/starburstdata/catalog/minio.properties:/etc/starburst/catalog/minio.properties
     restart: unless-stopped
   trino-cli:
     image: trivadis/trino-cli:latest

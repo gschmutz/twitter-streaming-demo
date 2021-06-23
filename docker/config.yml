@@ -34,7 +34,7 @@
       #
       # ===== Apache Zookeeper ========
       #
-      ZOOKEEPER_enable: true
+      ZOOKEEPER_enable: false
       ZOOKEEPER_volume_map_data: false
       ZOOKEEPER_nodes: 1 # either 1 or 3
       #
@@ -221,7 +221,7 @@
       #
       # ===== Apache Hive Metastore ========
       #
-      HIVE_METASTORE_enable: false
+      HIVE_METASTORE_enable: true
       #
       # ===== Apache Ranger ========
       #
@@ -270,11 +270,11 @@
       STREAMSETS_google_support: false
       STREAMSETS_azure_support: false
       STREAMSETS_nosql_support: false
-      STREAMSETS_stage_libs: 'streamsets-datacollector-apache-kafka_2_6-lib,streamsets-datacollector-aws-lib,streamsets-datacollector-azure-lib,streamsets-datacollector-groovy_2_4-lib,streamsets-datacollector-elasticsearch_7-lib,streamsets-datacollector-jdbc-lib'
+      STREAMSETS_stage_libs: 'streamsets-datacollector-apache-kafka_2_7-lib,streamsets-datacollector-aws-lib,streamsets-datacollector-azure-lib,streamsets-datacollector-groovy_2_4-lib,streamsets-datacollector-elasticsearch_7-lib,streamsets-datacollector-jdbc-lib'
       STREAMSETS_enterprise_stage_libs: ''
       STREAMSETS_install_pipelines: false
       # one of 'none', 'basic', 'digest', or 'form'
-      STREAMSETS_http_authentication: form
+      STREAMSETS_http_authentication: 'form'
       #
       # =====  Streamsets Transformer ========
       #
