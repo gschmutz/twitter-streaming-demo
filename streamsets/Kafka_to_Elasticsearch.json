@@ -2,10 +2,10 @@
   "pipelineConfig" : {
     "schemaVersion" : 6,
     "version" : 22,
-    "pipelineId" : "KafkatoSb9af249a-7f50-4d3e-8477-184a1e070efc",
-    "title" : "Kafka_to_S3",
+    "pipelineId" : "e49cd484d-eedc-4250-afa7-10e26eae755e",
+    "title" : "Kafka_to_Elasticsearch",
     "description" : "",
-    "uuid" : "5e4490c6-ee81-4a90-86a2-8729b61eedd8",
+    "uuid" : "1acbf6fc-8eb3-4bf8-9283-08f7618f8d36",
     "configuration" : [ {
       "name" : "executionMode",
       "value" : "STANDALONE"
@@ -15,6 +15,15 @@
     }, {
       "name" : "deliveryGuarantee",
       "value" : "AT_LEAST_ONCE"
+    }, {
+      "name" : "testOriginStage",
+      "value" : "streamsets-datacollector-dev-lib::com_streamsets_pipeline_stage_devtest_rawdata_RawDataDSource::3"
+    }, {
+      "name" : "startEventStage",
+      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_ToErrorNullDTarget::1"
+    }, {
+      "name" : "stopEventStage",
+      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_ToErrorNullDTarget::1"
     }, {
       "name" : "shouldRetry",
       "value" : true
@@ -43,8 +52,14 @@
       "name" : "constants",
       "value" : [ ]
     }, {
+      "name" : "badRecordsHandling",
+      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_ToErrorNullDTarget::1"
+    }, {
       "name" : "errorRecordPolicy",
       "value" : "ORIGINAL_RECORD"
+    }, {
+      "name" : "statsAggregatorStage",
+      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_StatsDpmDirectlyDTarget::1"
     }, {
       "name" : "workerCount",
       "value" : 0
@@ -411,21 +426,6 @@
     }, {
       "name" : "googleCloudConfig.terminate",
       "value" : null
-    }, {
-      "name" : "badRecordsHandling",
-      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_ToErrorNullDTarget::1"
-    }, {
-      "name" : "statsAggregatorStage",
-      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_StatsDpmDirectlyDTarget::1"
-    }, {
-      "name" : "startEventStage",
-      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_ToErrorNullDTarget::1"
-    }, {
-      "name" : "stopEventStage",
-      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_ToErrorNullDTarget::1"
-    }, {
-      "name" : "testOriginStage",
-      "value" : "streamsets-datacollector-dev-lib::com_streamsets_pipeline_stage_devtest_rawdata_RawDataDSource::3"
     } ],
     "uiInfo" : {
       "displayMode" : "BASIC",
@@ -474,20 +474,11 @@
         "name" : "kafkaConfigBean.dataFormatConfig.jsonMaxObjectLen",
         "value" : 409600
       }, {
-        "name" : "kafkaConfigBean.dataFormatConfig.csvFileFormat",
-        "value" : "CSV"
-      }, {
         "name" : "kafkaConfigBean.dataFormatConfig.csvHeader",
         "value" : "NO_HEADER"
       }, {
-        "name" : "kafkaConfigBean.dataFormatConfig.csvAllowExtraColumns",
-        "value" : false
-      }, {
-        "name" : "kafkaConfigBean.dataFormatConfig.csvExtraColumnPrefix",
-        "value" : "_extra_"
-      }, {
-        "name" : "kafkaConfigBean.dataFormatConfig.csvMaxObjectLen",
-        "value" : 1024
+        "name" : "kafkaConfigBean.dataFormatConfig.csvFileFormat",
+        "value" : "CSV"
       }, {
         "name" : "kafkaConfigBean.dataFormatConfig.csvCustomDelimiter",
         "value" : "|"
@@ -503,6 +494,45 @@
       }, {
         "name" : "kafkaConfigBean.dataFormatConfig.csvCustomQuote",
         "value" : "\""
+      }, {
+        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityFieldSeparator",
+        "value" : ","
+      }, {
+        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityEscape",
+        "value" : "\\"
+      }, {
+        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityQuote",
+        "value" : "\""
+      }, {
+        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityLineSeparator",
+        "value" : "${str:unescapeJava('\\\\n')}"
+      }, {
+        "name" : "kafkaConfigBean.dataFormatConfig.csvParser",
+        "value" : "LEGACY_PARSER"
+      }, {
+        "name" : "kafkaConfigBean.dataFormatConfig.csvAllowExtraColumns",
+        "value" : false
+      }, {
+        "name" : "kafkaConfigBean.dataFormatConfig.csvExtraColumnPrefix",
+        "value" : "_extra_"
+      }, {
+        "name" : "kafkaConfigBean.dataFormatConfig.csvMaxObjectLen",
+        "value" : 1024
+      }, {
+        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityMaxColumns",
+        "value" : 1000
+      }, {
+        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityMaxCharsPerColumn",
+        "value" : 1000
+      }, {
+        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocitySkipEmptyLines",
+        "value" : true
+      }, {
+        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityAllowComments",
+        "value" : false
+      }, {
+        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityCommentMarker",
+        "value" : "#"
       }, {
         "name" : "kafkaConfigBean.dataFormatConfig.csvEnableComments",
         "value" : false
@@ -681,6 +711,9 @@
         "name" : "kafkaConfigBean.connectionConfig.connection.securityConfig.securityOption",
         "value" : "PLAINTEXT"
       }, {
+        "name" : "kafkaConfigBean.connectionConfig.connection.securityConfig.saslMechanism",
+        "value" : "GSSAPI"
+      }, {
         "name" : "kafkaConfigBean.connectionConfig.connection.securityConfig.kerberosServiceName",
         "value" : null
       }, {
@@ -721,10 +754,10 @@
         "value" : "JSON"
       }, {
         "name" : "kafkaConfigBean.zookeeperConnect",
-        "value" : "zookeper-1:2181"
+        "value" : "localhost:2181"
       }, {
         "name" : "kafkaConfigBean.consumerGroup",
-        "value" : "tweetConsumer"
+        "value" : "tweet-json-to-es"
       }, {
         "name" : "kafkaConfigBean.topic",
         "value" : "tweet-json"
@@ -733,10 +766,10 @@
         "value" : false
       }, {
         "name" : "kafkaConfigBean.maxBatchSize",
-        "value" : 10000
+        "value" : 1000
       }, {
         "name" : "kafkaConfigBean.maxWaitTime",
-        "value" : 200000
+        "value" : 2000
       }, {
         "name" : "kafkaConfigBean.maxRatePerPartition",
         "value" : 1000
@@ -770,42 +803,9 @@
       }, {
         "name" : "stageOnRecordError",
         "value" : "TO_ERROR"
-      }, {
-        "name" : "kafkaConfigBean.dataFormatConfig.csvParser",
-        "value" : "LEGACY_PARSER"
-      }, {
-        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityFieldSeparator",
-        "value" : ","
-      }, {
-        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityLineSeparator",
-        "value" : "${str:unescapeJava('\\\\n')}"
-      }, {
-        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityEscape",
-        "value" : "\\"
-      }, {
-        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityQuote",
-        "value" : "\""
-      }, {
-        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityMaxColumns",
-        "value" : 1000
-      }, {
-        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityMaxCharsPerColumn",
-        "value" : 1000
-      }, {
-        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocitySkipEmptyLines",
-        "value" : true
-      }, {
-        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityAllowComments",
-        "value" : false
-      }, {
-        "name" : "kafkaConfigBean.dataFormatConfig.csvUnivocityCommentMarker",
-        "value" : "#"
-      }, {
-        "name" : "kafkaConfigBean.connectionConfig.connection.securityConfig.saslMechanism",
-        "value" : "GSSAPI"
       } ],
       "uiInfo" : {
-        "yPos" : 50,
+        "yPos" : 102,
         "stageType" : "SOURCE",
         "rawSource" : {
           "configuration" : [ {
@@ -828,140 +828,198 @@
         "icon" : "kafka.png",
         "description" : "",
         "label" : "Kafka Consumer 1",
-        "xPos" : 60,
+        "xPos" : 160,
         "displayMode" : "ADVANCED"
       },
       "inputLanes" : [ ],
-      "outputLanes" : [ "KafkaConsumer_01OutputLane16066529561270" ],
+      "outputLanes" : [ "KafkaConsumer_01OutputLane16232642747830" ],
       "eventLanes" : [ ],
       "services" : [ ]
     }, {
-      "instanceName" : "AmazonS3_01",
-      "library" : "streamsets-datacollector-aws-lib",
-      "stageName" : "com_streamsets_pipeline_stage_destination_s3_AmazonS3DTarget",
-      "stageVersion" : "13",
+      "instanceName" : "FieldTypeConverter_01",
+      "library" : "streamsets-datacollector-basic-lib",
+      "stageName" : "com_streamsets_pipeline_stage_processor_fieldtypeconverter_FieldTypeConverterDProcessor",
+      "stageVersion" : "2",
       "configuration" : [ {
-        "name" : "s3TargetConfigBean.s3Config.bucketTemplate",
-        "value" : "tweet-bucket"
+        "name" : "convertBy",
+        "value" : "BY_FIELD"
       }, {
-        "name" : "s3TargetConfigBean.s3Config.connectionSelection",
-        "value" : "MANUAL"
+        "name" : "fieldTypeConverterConfigs",
+        "value" : [ {
+          "fields" : [ "/created_at" ],
+          "targetType" : "DATETIME",
+          "treatInputFieldAsDate" : false,
+          "dataLocale" : "en,US",
+          "scale" : -1,
+          "decimalScaleRoundingStrategy" : "ROUND_UNNECESSARY",
+          "dateFormat" : "OTHER",
+          "zonedDateTimeFormat" : "ISO_ZONED_DATE_TIME",
+          "encoding" : "UTF-8",
+          "otherDateFormat" : "EEE MMM dd HH:mm:ss Z yyyy"
+        } ]
       }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.awsConfig.credentialMode",
-        "value" : "WITH_CREDENTIALS"
+        "name" : "wholeTypeConverterConfigs",
+        "value" : [ {
+          "sourceType" : "INTEGER",
+          "targetType" : "INTEGER",
+          "treatInputFieldAsDate" : false,
+          "dataLocale" : "en,US",
+          "scale" : -1,
+          "decimalScaleRoundingStrategy" : "ROUND_UNNECESSARY",
+          "dateFormat" : "YYYY_MM_DD",
+          "zonedDateTimeFormat" : "ISO_ZONED_DATE_TIME",
+          "encoding" : "UTF-8"
+        } ]
       }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.awsConfig.awsAccessKeyId",
-        "value" : ""
+        "name" : "stageOnRecordError",
+        "value" : "TO_ERROR"
       }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.awsConfig.awsSecretAccessKey",
-        "value" : ""
+        "name" : "stageRequiredFields",
+        "value" : [ ]
       }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.awsConfig.isAssumeRole",
-        "value" : false
+        "name" : "stageRecordPreconditions",
+        "value" : [ ]
+      } ],
+      "uiInfo" : {
+        "yPos" : 100,
+        "stageType" : "PROCESSOR",
+        "icon" : "converter.png",
+        "description" : "",
+        "label" : "Field Type Converter 1",
+        "xPos" : 453,
+        "displayMode" : "BASIC"
+      },
+      "inputLanes" : [ "KafkaConsumer_01OutputLane16232642747830" ],
+      "outputLanes" : [ "FieldTypeConverter_01OutputLane16232643939750" ],
+      "eventLanes" : [ ],
+      "services" : [ ]
+    }, {
+      "instanceName" : "ExpressionEvaluator_01",
+      "library" : "streamsets-datacollector-basic-lib",
+      "stageName" : "com_streamsets_pipeline_stage_processor_expression_ExpressionDProcessor",
+      "stageVersion" : "2",
+      "configuration" : [ {
+        "name" : "expressionProcessorConfigs",
+        "value" : [ {
+          "fieldToSet" : "/created_at",
+          "expression" : "${time:extractStringFromDate( record:value('/created_at'),'yyyy/MM/dd HH:mm:ss')}"
+        } ]
       }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.awsConfig.roleARN",
-        "value" : ""
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.awsConfig.roleSessionName",
-        "value" : null
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.awsConfig.sessionDuration",
-        "value" : 3600
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.awsConfig.setSessionTags",
-        "value" : true
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.useRegion",
-        "value" : false
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.region",
-        "value" : "OTHER"
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.endpoint",
-        "value" : "http://minio-1:9000"
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.proxyConfig.connectionTimeout",
-        "value" : 10
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.proxyConfig.socketTimeout",
-        "value" : 50
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.proxyConfig.retryCount",
-        "value" : 3
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.proxyConfig.useProxy",
-        "value" : false
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.proxyConfig.proxyHost",
-        "value" : null
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.proxyConfig.proxyPort",
-        "value" : null
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.proxyConfig.proxyUser",
-        "value" : null
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.proxyConfig.proxyPassword",
-        "value" : null
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.proxyConfig.proxyDomain",
-        "value" : null
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.connection.proxyConfig.proxyWorkstation",
-        "value" : null
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.commonPrefix",
-        "value" : "raw/tweets_v1"
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.delimiter",
-        "value" : "/"
-      }, {
-        "name" : "s3TargetConfigBean.s3Config.usePathAddressModel",
-        "value" : false
-      }, {
-        "name" : "s3TargetConfigBean.sseConfig.useSSE",
-        "value" : false
-      }, {
-        "name" : "s3TargetConfigBean.sseConfig.encryption",
-        "value" : "S3"
-      }, {
-        "name" : "s3TargetConfigBean.sseConfig.kmsKeyId",
-        "value" : null
-      }, {
-        "name" : "s3TargetConfigBean.sseConfig.encryptionContext",
+        "name" : "headerAttributeConfigs",
         "value" : [ { } ]
       }, {
-        "name" : "s3TargetConfigBean.sseConfig.customerKey",
-        "value" : null
+        "name" : "fieldAttributeConfigs",
+        "value" : [ {
+          "fieldToSet" : "/"
+        } ]
       }, {
-        "name" : "s3TargetConfigBean.sseConfig.customerKeyMd5",
-        "value" : null
+        "name" : "stageOnRecordError",
+        "value" : "TO_ERROR"
       }, {
-        "name" : "s3TargetConfigBean.tmConfig.threadPoolSize",
-        "value" : 10
+        "name" : "stageRequiredFields",
+        "value" : [ ]
       }, {
-        "name" : "s3TargetConfigBean.tmConfig.multipartUploadThreshold",
-        "value" : 268435456
-      }, {
-        "name" : "s3TargetConfigBean.tmConfig.minimumUploadPartSize",
-        "value" : 5242880
-      }, {
-        "name" : "s3TargetConfigBean.partitionTemplate",
-        "value" : null
-      }, {
-        "name" : "s3TargetConfigBean.timeZoneID",
-        "value" : "UTC"
-      }, {
-        "name" : "s3TargetConfigBean.timeDriverTemplate",
+        "name" : "stageRecordPreconditions",
+        "value" : [ ]
+      } ],
+      "uiInfo" : {
+        "yPos" : 104,
+        "stageType" : "PROCESSOR",
+        "icon" : "expression.png",
+        "description" : "",
+        "label" : "Expression Evaluator 1",
+        "xPos" : 695,
+        "displayMode" : "BASIC"
+      },
+      "inputLanes" : [ "FieldTypeConverter_01OutputLane16232643939750" ],
+      "outputLanes" : [ "ExpressionEvaluator_01OutputLane16232645341120" ],
+      "eventLanes" : [ ],
+      "services" : [ ]
+    }, {
+      "instanceName" : "Elasticsearch_01",
+      "library" : "streamsets-datacollector-elasticsearch_7-lib",
+      "stageName" : "com_streamsets_pipeline_stage_destination_elasticsearch_ElasticSearchDTarget",
+      "stageVersion" : "12",
+      "configuration" : [ {
+        "name" : "elasticSearchConfig.timeDriver",
         "value" : "${time:now()}"
       }, {
-        "name" : "s3TargetConfigBean.fileNamePrefix",
-        "value" : "tweets"
+        "name" : "elasticSearchConfig.timeZoneID",
+        "value" : "UTC"
       }, {
-        "name" : "s3TargetConfigBean.fileNameSuffix",
-        "value" : "json"
+        "name" : "elasticSearchConfig.indexTemplate",
+        "value" : "tweet"
       }, {
-        "name" : "s3TargetConfigBean.compress",
+        "name" : "elasticSearchConfig.typeTemplate",
+        "value" : "tweet-mapping"
+      }, {
+        "name" : "elasticSearchConfig.docIdTemplate",
+        "value" : null
+      }, {
+        "name" : "elasticSearchConfig.parentIdTemplate",
+        "value" : null
+      }, {
+        "name" : "elasticSearchConfig.routingTemplate",
+        "value" : null
+      }, {
+        "name" : "elasticSearchConfig.charset",
+        "value" : "UTF-8"
+      }, {
+        "name" : "elasticSearchConfig.defaultOperation",
+        "value" : "INDEX"
+      }, {
+        "name" : "elasticSearchConfig.unsupportedAction",
+        "value" : "DISCARD"
+      }, {
+        "name" : "elasticSearchConfig.rawAdditionalProperties",
+        "value" : "{\n}"
+      }, {
+        "name" : "elasticSearchConfig.connectionSelection",
+        "value" : "MANUAL"
+      }, {
+        "name" : "elasticSearchConfig.connection.securityConfig.securityMode",
+        "value" : "BASIC"
+      }, {
+        "name" : "elasticSearchConfig.connection.securityConfig.awsRegion",
+        "value" : null
+      }, {
+        "name" : "elasticSearchConfig.connection.securityConfig.endpoint",
+        "value" : null
+      }, {
+        "name" : "elasticSearchConfig.connection.securityConfig.awsAccessKeyId",
+        "value" : null
+      }, {
+        "name" : "elasticSearchConfig.connection.securityConfig.awsSecretAccessKey",
+        "value" : null
+      }, {
+        "name" : "elasticSearchConfig.connection.securityConfig.securityUser",
+        "value" : ""
+      }, {
+        "name" : "elasticSearchConfig.connection.securityConfig.securityPassword",
+        "value" : ""
+      }, {
+        "name" : "elasticSearchConfig.connection.securityConfig.enableSSL",
+        "value" : false
+      }, {
+        "name" : "elasticSearchConfig.connection.securityConfig.sslTrustStorePath",
+        "value" : null
+      }, {
+        "name" : "elasticSearchConfig.connection.securityConfig.sslTrustStorePassword",
+        "value" : null
+      }, {
+        "name" : "elasticSearchConfig.connection.serverUrl",
+        "value" : "https://i-o-optimized-deployment-7df0fd.es.us-west1.gcp.cloud.es.io"
+      }, {
+        "name" : "elasticSearchConfig.connection.port",
+        "value" : "9243"
+      }, {
+        "name" : "elasticSearchConfig.connection.useSecurity",
+        "value" : true
+      }, {
+        "name" : "elasticSearchConfig.params",
+        "value" : [ ]
+      }, {
+        "name" : "elasticSearchConfig.clientSniff",
         "value" : false
       }, {
         "name" : "stageOnRecordError",
@@ -974,139 +1032,18 @@
         "value" : [ ]
       } ],
       "uiInfo" : {
-        "yPos" : 50,
+        "yPos" : 102,
         "stageType" : "TARGET",
-        "icon" : "s3.png",
+        "icon" : "elasticsearch.png",
         "description" : "",
-        "label" : "Amazon S3 1",
-        "xPos" : 280,
-        "displayMode" : "ADVANCED"
+        "label" : "Elasticsearch 1",
+        "xPos" : 969,
+        "displayMode" : "BASIC"
       },
-      "inputLanes" : [ "KafkaConsumer_01OutputLane16066529561270" ],
+      "inputLanes" : [ "ExpressionEvaluator_01OutputLane16232645341120" ],
       "outputLanes" : [ ],
       "eventLanes" : [ ],
-      "services" : [ {
-        "service" : "com.streamsets.pipeline.api.service.dataformats.DataFormatGeneratorService",
-        "serviceVersion" : 1,
-        "configuration" : [ {
-          "name" : "dataFormat",
-          "value" : "JSON"
-        }, {
-          "name" : "dataGeneratorFormatConfig.charset",
-          "value" : "UTF-8"
-        }, {
-          "name" : "dataGeneratorFormatConfig.csvFileFormat",
-          "value" : "CSV"
-        }, {
-          "name" : "dataGeneratorFormatConfig.csvHeader",
-          "value" : "NO_HEADER"
-        }, {
-          "name" : "dataGeneratorFormatConfig.csvReplaceNewLines",
-          "value" : true
-        }, {
-          "name" : "dataGeneratorFormatConfig.csvReplaceNewLinesString",
-          "value" : " "
-        }, {
-          "name" : "dataGeneratorFormatConfig.csvCustomDelimiter",
-          "value" : "|"
-        }, {
-          "name" : "dataGeneratorFormatConfig.csvCustomEscape",
-          "value" : "\\"
-        }, {
-          "name" : "dataGeneratorFormatConfig.csvCustomQuote",
-          "value" : "\""
-        }, {
-          "name" : "dataGeneratorFormatConfig.csvQuoteMode",
-          "value" : "MINIMAL"
-        }, {
-          "name" : "dataGeneratorFormatConfig.jsonMode",
-          "value" : "MULTIPLE_OBJECTS"
-        }, {
-          "name" : "dataGeneratorFormatConfig.textFieldPath",
-          "value" : "/text"
-        }, {
-          "name" : "dataGeneratorFormatConfig.textRecordSeparator",
-          "value" : "\\n"
-        }, {
-          "name" : "dataGeneratorFormatConfig.textFieldMissingAction",
-          "value" : "ERROR"
-        }, {
-          "name" : "dataGeneratorFormatConfig.textEmptyLineIfNull",
-          "value" : false
-        }, {
-          "name" : "dataGeneratorFormatConfig.avroSchemaSource",
-          "value" : null
-        }, {
-          "name" : "dataGeneratorFormatConfig.avroSchema",
-          "value" : null
-        }, {
-          "name" : "dataGeneratorFormatConfig.registerSchema",
-          "value" : false
-        }, {
-          "name" : "dataGeneratorFormatConfig.schemaRegistryUrlsForRegistration",
-          "value" : [ "" ]
-        }, {
-          "name" : "dataGeneratorFormatConfig.schemaRegistryUrls",
-          "value" : [ "" ]
-        }, {
-          "name" : "dataGeneratorFormatConfig.basicAuthUserInfo",
-          "value" : null
-        }, {
-          "name" : "dataGeneratorFormatConfig.schemaLookupMode",
-          "value" : "SUBJECT"
-        }, {
-          "name" : "dataGeneratorFormatConfig.subject",
-          "value" : null
-        }, {
-          "name" : "dataGeneratorFormatConfig.subjectToRegister",
-          "value" : null
-        }, {
-          "name" : "dataGeneratorFormatConfig.basicAuthUserInfoForRegistration",
-          "value" : null
-        }, {
-          "name" : "dataGeneratorFormatConfig.schemaId",
-          "value" : null
-        }, {
-          "name" : "dataGeneratorFormatConfig.includeSchema",
-          "value" : true
-        }, {
-          "name" : "dataGeneratorFormatConfig.avroCompression",
-          "value" : "NULL"
-        }, {
-          "name" : "dataGeneratorFormatConfig.binaryFieldPath",
-          "value" : "/"
-        }, {
-          "name" : "dataGeneratorFormatConfig.protoDescriptorFile",
-          "value" : null
-        }, {
-          "name" : "dataGeneratorFormatConfig.messageType",
-          "value" : null
-        }, {
-          "name" : "dataGeneratorFormatConfig.fileNameEL",
-          "value" : null
-        }, {
-          "name" : "dataGeneratorFormatConfig.wholeFileExistsAction",
-          "value" : "TO_ERROR"
-        }, {
-          "name" : "dataGeneratorFormatConfig.includeChecksumInTheEvents",
-          "value" : false
-        }, {
-          "name" : "dataGeneratorFormatConfig.checksumAlgorithm",
-          "value" : "MD5"
-        }, {
-          "name" : "dataGeneratorFormatConfig.xmlPrettyPrint",
-          "value" : true
-        }, {
-          "name" : "dataGeneratorFormatConfig.xmlValidateSchema",
-          "value" : false
-        }, {
-          "name" : "dataGeneratorFormatConfig.xmlSchema",
-          "value" : null
-        }, {
-          "name" : "displayFormats",
-          "value" : "AVRO,BINARY,DELIMITED,JSON,PROTOBUF,SDC_JSON,TEXT,WHOLE_FILE"
-        } ]
-      } ]
+      "services" : [ ]
     } ],
     "errorStage" : {
       "instanceName" : "errorStageStageInstance",
@@ -1124,20 +1061,20 @@
       "services" : [ ]
     },
     "info" : {
-      "pipelineId" : "KafkatoSb9af249a-7f50-4d3e-8477-184a1e070efc",
-      "title" : "Kafka_to_S3",
+      "pipelineId" : "e49cd484d-eedc-4250-afa7-10e26eae755e",
+      "title" : "Kafka_to_Elasticsearch",
       "description" : "",
-      "created" : 1623268132669,
-      "lastModified" : 1623268195706,
+      "created" : 1623272373972,
+      "lastModified" : 1623272440714,
       "creator" : "admin",
       "lastModifier" : "admin",
       "lastRev" : "0",
-      "uuid" : "5e4490c6-ee81-4a90-86a2-8729b61eedd8",
+      "uuid" : "1acbf6fc-8eb3-4bf8-9283-08f7618f8d36",
       "valid" : true,
       "metadata" : {
         "labels" : [ ]
       },
-      "name" : "KafkatoSb9af249a-7f50-4d3e-8477-184a1e070efc",
+      "name" : "e49cd484d-eedc-4250-afa7-10e26eae755e",
       "sdcVersion" : "3.22.2",
       "sdcId" : "960bd6ff-c95a-11eb-8573-393431075701"
     },
@@ -1171,7 +1108,7 @@
         "icon" : "",
         "description" : "",
         "label" : "Start Event - Discard",
-        "xPos" : 280
+        "xPos" : 648
       },
       "inputLanes" : [ ],
       "outputLanes" : [ ],
@@ -1190,7 +1127,7 @@
         "icon" : "",
         "description" : "",
         "label" : "Stop Event - Discard",
-        "xPos" : 280
+        "xPos" : 648
       },
       "inputLanes" : [ ],
       "outputLanes" : [ ],
@@ -1262,20 +1199,11 @@
           "name" : "dataFormatConfig.jsonMaxObjectLen",
           "value" : 4096
         }, {
-          "name" : "dataFormatConfig.csvFileFormat",
-          "value" : "CSV"
-        }, {
           "name" : "dataFormatConfig.csvHeader",
           "value" : "NO_HEADER"
         }, {
-          "name" : "dataFormatConfig.csvAllowExtraColumns",
-          "value" : false
-        }, {
-          "name" : "dataFormatConfig.csvExtraColumnPrefix",
-          "value" : "_extra_"
-        }, {
-          "name" : "dataFormatConfig.csvMaxObjectLen",
-          "value" : 1024
+          "name" : "dataFormatConfig.csvFileFormat",
+          "value" : "CSV"
         }, {
           "name" : "dataFormatConfig.csvCustomDelimiter",
           "value" : "|"
@@ -1291,6 +1219,45 @@
         }, {
           "name" : "dataFormatConfig.csvCustomQuote",
           "value" : "\""
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityFieldSeparator",
+          "value" : ","
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityEscape",
+          "value" : "\\"
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityQuote",
+          "value" : "\""
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityLineSeparator",
+          "value" : "${str:unescapeJava('\\\\n')}"
+        }, {
+          "name" : "dataFormatConfig.csvParser",
+          "value" : "LEGACY_PARSER"
+        }, {
+          "name" : "dataFormatConfig.csvAllowExtraColumns",
+          "value" : false
+        }, {
+          "name" : "dataFormatConfig.csvExtraColumnPrefix",
+          "value" : "_extra_"
+        }, {
+          "name" : "dataFormatConfig.csvMaxObjectLen",
+          "value" : 1024
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityMaxColumns",
+          "value" : 1000
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityMaxCharsPerColumn",
+          "value" : 1000
+        }, {
+          "name" : "dataFormatConfig.csvUnivocitySkipEmptyLines",
+          "value" : false
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityAllowComments",
+          "value" : false
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityCommentMarker",
+          "value" : "#"
         }, {
           "name" : "dataFormatConfig.csvEnableComments",
           "value" : false
@@ -1459,36 +1426,6 @@
         }, {
           "name" : "dataFormatConfig.excelSheetNames",
           "value" : [ ]
-        }, {
-          "name" : "dataFormatConfig.csvParser",
-          "value" : "LEGACY_PARSER"
-        }, {
-          "name" : "dataFormatConfig.csvUnivocityFieldSeparator",
-          "value" : ","
-        }, {
-          "name" : "dataFormatConfig.csvUnivocityLineSeparator",
-          "value" : "${str:unescapeJava('\\\\n')}"
-        }, {
-          "name" : "dataFormatConfig.csvUnivocityEscape",
-          "value" : "\\"
-        }, {
-          "name" : "dataFormatConfig.csvUnivocityQuote",
-          "value" : "\""
-        }, {
-          "name" : "dataFormatConfig.csvUnivocityMaxColumns",
-          "value" : 1000
-        }, {
-          "name" : "dataFormatConfig.csvUnivocityMaxCharsPerColumn",
-          "value" : 1000
-        }, {
-          "name" : "dataFormatConfig.csvUnivocitySkipEmptyLines",
-          "value" : true
-        }, {
-          "name" : "dataFormatConfig.csvUnivocityAllowComments",
-          "value" : false
-        }, {
-          "name" : "dataFormatConfig.csvUnivocityCommentMarker",
-          "value" : "#"
         } ]
       } ]
     },
@@ -1512,7 +1449,7 @@
       "condition" : "${value() > 100}",
       "sendEmail" : false,
       "enabled" : false,
-      "timestamp" : 1606652939857,
+      "timestamp" : 1623264246084,
       "valid" : true
     }, {
       "id" : "stageErrorAlertID",
@@ -1523,7 +1460,7 @@
       "condition" : "${value() > 100}",
       "sendEmail" : false,
       "enabled" : false,
-      "timestamp" : 1606652939857,
+      "timestamp" : 1623264246084,
       "valid" : true
     }, {
       "id" : "idleGaugeID",
@@ -1534,7 +1471,7 @@
       "condition" : "${time:now() - value() > 120000}",
       "sendEmail" : false,
       "enabled" : false,
-      "timestamp" : 1606652939857,
+      "timestamp" : 1623264246084,
       "valid" : true
     }, {
       "id" : "batchTimeAlertID",
@@ -1545,12 +1482,12 @@
       "condition" : "${value() > 200}",
       "sendEmail" : false,
       "enabled" : false,
-      "timestamp" : 1606652939857,
+      "timestamp" : 1623264246084,
       "valid" : true
     } ],
     "dataRuleDefinitions" : [ ],
     "driftRuleDefinitions" : [ ],
-    "uuid" : "1a363506-e9ae-493c-b269-dab05cefc80a",
+    "uuid" : "a42bcdfa-40fc-4d89-9ad4-ce0a5de56db4",
     "configuration" : [ {
       "name" : "emailIDs",
       "value" : [ ]

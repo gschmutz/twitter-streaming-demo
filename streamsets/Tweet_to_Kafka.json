@@ -2,10 +2,10 @@
   "pipelineConfig" : {
     "schemaVersion" : 6,
     "version" : 22,
-    "pipelineId" : "TweettoKe0d560ad-445c-4c4b-b62d-18ba76c63186",
+    "pipelineId" : "TweettoKe6522d4b-6dac-41a4-b60b-656f04754dfc",
     "title" : "Tweet_to_Kafka",
     "description" : "",
-    "uuid" : "a8917258-ad03-4ef7-bffc-42dfb5d81e88",
+    "uuid" : "b542d6e9-fa7c-4fa9-9943-d37666c52ca4",
     "configuration" : [ {
       "name" : "executionMode",
       "value" : "STANDALONE"
@@ -370,21 +370,6 @@
       "name" : "transformerEmrConnection.stepConcurrency",
       "value" : 1
     }, {
-      "name" : "badRecordsHandling",
-      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_ToErrorNullDTarget::1"
-    }, {
-      "name" : "statsAggregatorStage",
-      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_StatsDpmDirectlyDTarget::1"
-    }, {
-      "name" : "startEventStage",
-      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_ToErrorNullDTarget::1"
-    }, {
-      "name" : "stopEventStage",
-      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_ToErrorNullDTarget::1"
-    }, {
-      "name" : "testOriginStage",
-      "value" : "streamsets-datacollector-dev-lib::com_streamsets_pipeline_stage_devtest_rawdata_RawDataDSource::3"
-    }, {
       "name" : "clusterConfig.yarnKerberosKeytabBase64Bytes",
       "value" : null
     }, {
@@ -426,6 +411,21 @@
     }, {
       "name" : "transformerEmrConnection.emrVersion",
       "value" : null
+    }, {
+      "name" : "badRecordsHandling",
+      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_ToErrorNullDTarget::1"
+    }, {
+      "name" : "statsAggregatorStage",
+      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_StatsDpmDirectlyDTarget::1"
+    }, {
+      "name" : "startEventStage",
+      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_ToErrorNullDTarget::1"
+    }, {
+      "name" : "stopEventStage",
+      "value" : "streamsets-datacollector-basic-lib::com_streamsets_pipeline_stage_destination_devnull_ToErrorNullDTarget::1"
+    }, {
+      "name" : "testOriginStage",
+      "value" : "streamsets-datacollector-dev-lib::com_streamsets_pipeline_stage_devtest_rawdata_RawDataDSource::3"
     } ],
     "uiInfo" : {
       "displayMode" : "BASIC",
@@ -445,7 +445,7 @@
       "instanceName" : "HTTPClient_01",
       "library" : "streamsets-datacollector-basic-lib",
       "stageName" : "com_streamsets_pipeline_stage_origin_http_HttpClientDSource",
-      "stageVersion" : "18",
+      "stageVersion" : "19",
       "configuration" : [ {
         "name" : "conf.basic.maxBatchSize",
         "value" : 1000
@@ -676,7 +676,7 @@
         "value" : [ ]
       }, {
         "name" : "conf.resourceUrl",
-        "value" : "https://stream.twitter.com/1.1/statuses/filter.json?track=trump,biden"
+        "value" : "https://stream.twitter.com/1.1/statuses/filter.json?track=bigdata,nosql,kafka,iot,platys,datalake,spark,machine-learning,trino,presto,sql"
       }, {
         "name" : "conf.headers",
         "value" : [ ]
@@ -919,14 +919,44 @@
       }, {
         "name" : "conf.client.tlsConfig.useRemoteTrustStore",
         "value" : null
+      }, {
+        "name" : "conf.dataFormatConfig.csvParser",
+        "value" : "LEGACY_PARSER"
+      }, {
+        "name" : "conf.dataFormatConfig.csvUnivocityFieldSeparator",
+        "value" : ","
+      }, {
+        "name" : "conf.dataFormatConfig.csvUnivocityLineSeparator",
+        "value" : "${str:unescapeJava('\\\\n')}"
+      }, {
+        "name" : "conf.dataFormatConfig.csvUnivocityEscape",
+        "value" : "\\"
+      }, {
+        "name" : "conf.dataFormatConfig.csvUnivocityQuote",
+        "value" : "\""
+      }, {
+        "name" : "conf.dataFormatConfig.csvUnivocityMaxColumns",
+        "value" : 1000
+      }, {
+        "name" : "conf.dataFormatConfig.csvUnivocityMaxCharsPerColumn",
+        "value" : 1000
+      }, {
+        "name" : "conf.dataFormatConfig.csvUnivocitySkipEmptyLines",
+        "value" : true
+      }, {
+        "name" : "conf.dataFormatConfig.csvUnivocityAllowComments",
+        "value" : false
+      }, {
+        "name" : "conf.dataFormatConfig.csvUnivocityCommentMarker",
+        "value" : "#"
       } ],
       "uiInfo" : {
-        "yPos" : 53,
+        "yPos" : 51,
         "stageType" : "SOURCE",
         "icon" : "httpclient.png",
         "description" : "",
         "label" : "HTTP Client 1",
-        "xPos" : 59,
+        "xPos" : 58,
         "displayMode" : "BASIC"
       },
       "inputLanes" : [ ],
@@ -935,9 +965,9 @@
       "services" : [ ]
     }, {
       "instanceName" : "KafkaProducer_01",
-      "library" : "streamsets-datacollector-apache-kafka_1_1-lib",
+      "library" : "streamsets-datacollector-apache-kafka_2_7-lib",
       "stageName" : "com_streamsets_pipeline_stage_destination_kafka_KafkaDTarget",
-      "stageVersion" : "8",
+      "stageVersion" : "10",
       "configuration" : [ {
         "name" : "conf.dataFormat",
         "value" : "JSON"
@@ -1151,14 +1181,17 @@
       }, {
         "name" : "conf.connectionConfig.connection.securityConfig.enabledProtocols",
         "value" : "TLSv1.2"
+      }, {
+        "name" : "conf.connectionConfig.connection.securityConfig.saslMechanism",
+        "value" : "GSSAPI"
       } ],
       "uiInfo" : {
-        "yPos" : 50,
+        "yPos" : 49,
         "stageType" : "TARGET",
         "icon" : "kafka.png",
         "description" : "",
         "label" : "Kafka Producer 1",
-        "xPos" : 280,
+        "xPos" : 287,
         "displayMode" : "BASIC"
       },
       "inputLanes" : [ "HTTPClient_01OutputLane15744473538740" ],
@@ -1186,22 +1219,22 @@
       "services" : [ ]
     },
     "info" : {
-      "pipelineId" : "TweettoKe0d560ad-445c-4c4b-b62d-18ba76c63186",
+      "pipelineId" : "TweettoKe6522d4b-6dac-41a4-b60b-656f04754dfc",
       "title" : "Tweet_to_Kafka",
       "description" : "",
-      "created" : 1605819003404,
-      "lastModified" : 1605819169622,
-      "creator" : "twi.streamanalytics@gmail.com",
-      "lastModifier" : "twi.streamanalytics@gmail.com",
+      "created" : 1624428805030,
+      "lastModified" : 1624428871554,
+      "creator" : "admin",
+      "lastModifier" : "admin",
       "lastRev" : "0",
-      "uuid" : "a8917258-ad03-4ef7-bffc-42dfb5d81e88",
+      "uuid" : "b542d6e9-fa7c-4fa9-9943-d37666c52ca4",
       "valid" : true,
       "metadata" : {
         "labels" : [ ]
       },
-      "name" : "TweettoKe0d560ad-445c-4c4b-b62d-18ba76c63186",
-      "sdcVersion" : "3.19.0",
-      "sdcId" : "1c9a04ba-2aa8-11eb-8d55-e1219660438c"
+      "name" : "TweettoKe6522d4b-6dac-41a4-b60b-656f04754dfc",
+      "sdcVersion" : "3.22.2",
+      "sdcId" : "5f867513-d3e9-11eb-940d-27a61f6d786a"
     },
     "metadata" : {
       "labels" : [ ]
@@ -1286,7 +1319,7 @@
       "eventLanes" : [ ],
       "services" : [ {
         "service" : "com.streamsets.pipeline.api.service.dataformats.DataFormatParserService",
-        "serviceVersion" : 2,
+        "serviceVersion" : 3,
         "configuration" : [ {
           "name" : "displayFormats",
           "value" : "DELIMITED,JSON,LOG,SDC_JSON,TEXT,XML"
@@ -1521,6 +1554,36 @@
         }, {
           "name" : "dataFormatConfig.basicAuth",
           "value" : null
+        }, {
+          "name" : "dataFormatConfig.csvParser",
+          "value" : "LEGACY_PARSER"
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityFieldSeparator",
+          "value" : ","
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityLineSeparator",
+          "value" : "${str:unescapeJava('\\\\n')}"
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityEscape",
+          "value" : "\\"
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityQuote",
+          "value" : "\""
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityMaxColumns",
+          "value" : 1000
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityMaxCharsPerColumn",
+          "value" : 1000
+        }, {
+          "name" : "dataFormatConfig.csvUnivocitySkipEmptyLines",
+          "value" : true
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityAllowComments",
+          "value" : false
+        }, {
+          "name" : "dataFormatConfig.csvUnivocityCommentMarker",
+          "value" : "#"
         } ]
       } ]
     },
@@ -1582,7 +1645,7 @@
     } ],
     "dataRuleDefinitions" : [ ],
     "driftRuleDefinitions" : [ ],
-    "uuid" : "89589912-27ce-4937-bbca-f82b70ac7d48",
+    "uuid" : "79e6258e-5f12-4438-ad6b-8ba094fa0210",
     "configuration" : [ {
       "name" : "emailIDs",
       "value" : [ ]
