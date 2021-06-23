@@ -131,7 +131,7 @@
       #
       # ===== Kafkacat ========
       #
-      KAFKACAT_enable: false
+      KAFKACAT_enable: true
       #
       # ===== Various Kafka UIs ========
       #

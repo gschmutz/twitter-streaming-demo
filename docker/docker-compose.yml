@@ -205,6 +205,19 @@ services:
       - ./data-transfer:/data-transfer
     entrypoint: /bin/sh
     tty: true
+  #  ================================== Kafkacat  ========================================== #
+  kafkacat:
+    image: edenhill/kafkacat:1.6.0
+    container_name: kafkacat
+    hostname: kafkacat
+    volumes:
+      - ./data-transfer:/data-transfer
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        while [ 1 -eq 1 ];do sleep 60;done
+    restart: unless-stopped
   #  ================================== Cluster Manager for Apache Kafka (CMAK) ========================================== #
   cmak:
     image: trivadis/cmak:latest
