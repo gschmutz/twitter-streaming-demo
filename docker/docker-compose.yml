@@ -774,7 +774,7 @@ services:
       MINIO_SECRET_KEY: bKhWxVF3kQoLY9kFmt91l+tDrEoZjqnWXzY9Eza
       MINIO_REGION_NAME: us-east-1
       MINIO_BROWSER: 'True'
-      #MINIO_DEFAULT_BUCKETS: 'admin-bucket,'
+      #MINIO_DEFAULT_BUCKETS: 'admin-bucket,tweet-bucket'
     volumes:
       - ./data-transfer:/data-transfer
     command: server /data
@@ -793,7 +793,7 @@ services:
       - |
         sleep 10
         mc mb --ignore-existing minio-1/admin-bucket
-        for i in $$(echo "" | sed "s/,/ /g")
+        for i in $$(echo "tweet-bucket" | sed "s/,/ /g")
         do
           mc mb --ignore-existing minio-1/$$i
         done
