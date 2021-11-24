@@ -18,7 +18,7 @@ For the `HTTP Client` configure these properties:
   * **Resource URL**: `https://stream.twitter.com/1.1/statuses/filter.json?track=trump,biden`
   * **Authentication Type**: `OAuth`
 * Tab **Credentials**
-  * Set **Consumer Key**, **Consumer Secret**, **Token** and **Token Secret** to the values gotten from the Twitter application
+  * Set **Consumer Key**, **Consumer Secret**, **Token** and **Token Secret** to the values gotten from the Twitter application (registered here: <https://developer.twitter.com/en/apps>)
 * Tab **Data Format**
   * **Data Format**: `JSON`
   * **Max object Length (chars)**: `409600`     
@@ -63,7 +63,7 @@ For the `Kafka Consumer` configure these properties:
   * **Topic**: `tweet-json`
   * **Zookeeper URI**: `zookeeper-1:2181`
   * **Max Batch Size (records)**: `10000`
-  * **Batch Wait Time (ms): `200000`
+  * **Batch Wait Time (ms)**: `200000`
 * Tab **Data Format**
   * **Data Format**: `JSON`
   * **Max object Length (chars)**: `409600`     
@@ -78,7 +78,7 @@ For the `Amazon S3` configure these properties (as the MinIO is part of the self
   * **Region**: `Other - specify`
   * **Endpoint**: `http://minio:9000`
   * **Bucket**: `tweet-bucket`
-  * **Common Prefix**: `raw`
+  * **Common Prefix**: `raw/tweets-v1`
   * **Object Name Suffix**: `json`
   * **Delimiter**: `/`
   * **Use Path Style Address Model**: `X`
@@ -146,8 +146,7 @@ Let's work with some nested fields. Inside the `entities` structure there is a `
 
 ```sql
 SELECT text, entities->user_mentions 
-FROM tweet_json_s 
-EMIT CHANGES;
+FROMINS
 ```
 
 With that we can easily check the array for all the tweets where `@realDonaldTrump` is mentioned
@@ -194,7 +193,7 @@ On that new stream we can now do aggregation. Because a stream is unbounded, we 
 
 ```sql
 SELECT hashtag
-	, count(*) 
+	, count(*) AS count
 FROM tweet_hashtag_s 
 WINDOW TUMBLING (SIZE 60 seconds) 
 GROUP BY hashtag
@@ -207,8 +206,42 @@ By using the `EMIT FINAL`, we specify that we only want to get a result at the e
 
 In the 4th step, we will be using the [Elastisearch](https://www.elastic.co/elastic-stack) NoSQL datastore to persist the tweets for later retrieval by Kibana. Elasticsearch is popular for its text-based search capabilities.
 
+![Alt Image Text](./images/use-case-step4a.png "Use Case Step 4a")
+
+Navigate to <http://dataplatform:18630> to open StreamSets and create a new pipeline. 
+
+Add a `Kafka Consumer` origin and a `Amazon S3` destination.
+
+For the `Kafka Consumer` configure these properties:
+
+* Tab **Kafka**
+  * **Broker URI**: `kafka-1:19092`
+  * **Consumer Group**: `TweetConsumerV1`
+  * **Topic**: `tweet-json`
+  * **Zookeeper URI**: `zookeeper-1:2181`
+  * **Max Batch Size (records)**: `10000`
+  * **Batch Wait Time (ms): `200000`
+* Tab **Data Format**
+  * **Data Format**: `JSON`
+  * **Max object Length (chars)**: `409600`   
 
 
+For the `Amazon S3` configure these properties (as the MinIO is part of the self-contained platform, we can put the Access key and Secret Access key here in the text):
+
+* Tab **Amazon S3**
+  * **Authentication Method**: `AWS Keys`
+  * **Access Key ID**: `V42FCGRVMK24JJ8DHUYG`
+  * **Secret Access Key**: `bKhWxVF3kQoLY9kFmt91l+tDrEoZjqnWXzY9Eza`
+  * **Use Specific Region**: `X`
+  * **Region**: `Other - specify`
+  * **Endpoint**: `http://minio:9000`
+  * **Bucket**: `tweet-bucket`
+  * **Common Prefix**: `raw`
+  * **Object Name Suffix**: `json`
+  * **Delimiter**: `/`
+  * **Use Path Style Address Model**: `X`
+* Tab **Data Format**
+  * **Data Format**: `JSON`
 
 ## Processing Tweets using Apache Spark
 
@@ -221,13 +254,13 @@ Navigate to <http://dataplatform:28080> to open Apache Zeppelin and login as use
 Now let's read all the data we have stored to MinIO object storage so far, using the `spark.read.json` command
 
 ```scala
-val tweets = spark.read.json("s3a://tweet-bucket/raw/")
+val tweetRawDf = spark.read.json("s3a://tweet-bucket/raw/tweets-v1/")
 ```
 
 Spark returns the result as a Data Frame, which is backed by a schema, derived from the JSON structure. We can use the `printSchema` method on the data frame to view the schema.
 
 ```scala
-tweets.printSchema
+tweetRawDf.printSchema()
 ```
 
 the schema is quite lengthy, here only the start and the end is shown, leaving out the details in the middle
@@ -310,25 +343,25 @@ We can see that the a tweet has a hierarchical structure and that the tweet text
 Now let's use the `cache` method to cache the data in memory, so that further queries are more efficient
 
 ```scala
-val tweetsCached = tweets.cache()
+val tweetRawCachedDf = tweetRawDf.cache()
 ```
 
 Let`s see one record of the data frame
 
 ```scala
-tweetsCached.show(1)
+tweetRawCachedDf.show(1)
 ```
 
 We can also ask the data frame for the number of records, using the `count` method
 
 ```scala
-tweetsCached.count()
+tweetRawCachedDf.count()
 ```
 
 Spark SQL allows to use the SQL language to work on the data in a data frame. We can register a table on a data frame.
  
 ```scala
-tweetsCached.createOrReplaceTempView("tweets")
+tweetRawCachedDf.createOrReplaceTempView("tweets")
 ```
 
 With the `tweets` table registered, we can use it in a SELECT statement. Inside spark, you can use the `spark.sql()` to execute the SELECT statement.
@@ -372,9 +405,12 @@ Let's say this is the result we want to make available. We can now turn it into 
 
 ```scala
 val resultDf = spark.sql("""
-select hashtag, count(*) nof from (
-select lower(hashtag.text) as hashtag from tweets lateral view explode(entities.hashtags) hashtags as hashtag ) group by hashtag
-order by nof desc
+    SELECT hashtag, COUNT(*) nof 
+    FROM (
+	    SELECT LOWER(hashtag.text) AS hashtag 
+	    FROM tweets LATERAL VIEW EXPLODE(entities.hashtags) hashtags AS hashtag ) 
+	    GROUP BY hashtag
+    ORDER BY nof desc
 """)
 ```
 
@@ -386,13 +422,13 @@ resultDf.write.parquet("s3a://tweet-bucket/result/hashtag-counts")
 
 We store it in Minio object storage in the same bucket as the raw data, but use another path `result/hashtag-counts` so that we can distinguish the raw twitter data from the `hashtag-counts` data. We also no longer use json as the data format but the more efficient parquet data format.
 
-## Using Presto to query the result in object storage
+## Using Trino to query the result in object storage
 
-In this last step, we are using [Presto SQL](https://prestosql.io/) engine to make the result data we have created in the previous step available for querying over SQL. 
+In this last step, we are using [Trino](https://trino.io/) engine to make the result data we have created in the previous step available for querying over SQL. 
 
 ![Alt Image Text](./images/use-case-step5.png "Use Case Step 5")
 
-To make the data in object storage usable in Presto, we first have to create the necessary meta data in the Hive Metastore. The Hive Metastore is similar to a data dictionary in the relational world, it stores the meta information about the data stored somewhere else, such as in object storage. 
+To make the data in object storage usable in Trino, we first have to create the necessary meta data in the Hive Metastore. The Hive Metastore is similar to a data dictionary in the relational world, it stores the meta information about the data stored somewhere else, such as in object storage. 
 
 We first start the Hive Metastore CLI
 
@@ -400,10 +436,15 @@ We first start the Hive Metastore CLI
 docker exec -ti hive-metastore hive
 ```
 
-and create a database and then switch to that database
+and create a database 
 
 ```sql
 CREATE DATABASE twitter_data;
+```
+
+and then switch to that database
+
+```sql
 USE twitter_data;
 ```
 
@@ -422,7 +463,7 @@ With the table in place, we can quit the CLI using the `exit;` command.
 Now let's start the Presto CLI and connect to the `presto-1` service
 
 ```bash
-docker exec -ti presto-cli presto --server presto-1:8080 --catalog minio
+docker exec -ti trino-cli trino --server trino-1:8080 --catalog minio
 ```
 
 We then switch to the `minio` catalog and the `twitter_data` database, which matches the name of the database we have created in the Hive Metastore before
@@ -450,3 +491,48 @@ SELECT count(*) FROM hashtag_count_t;
 ```
 
 Presto can be integrated into many standard data analytics tools, such as PowerBI or Tableau any many others.
+
+## Using Athena (if on S3)
+
+```
+CREATE EXTERNAL TABLE tweet.tweets(
+  `in_reply_to_status_id_str` string COMMENT 'from deserializer', 
+  `in_reply_to_status_id` bigint COMMENT 'from deserializer', 
+  `created_at` string COMMENT 'from deserializer', 
+  `in_reply_to_user_id_str` string COMMENT 'from deserializer', 
+  `source` string COMMENT 'from deserializer', 
+  `retweet_count` int COMMENT 'from deserializer', 
+  `retweeted` boolean COMMENT 'from deserializer', 
+  `geo` struct<coordinates:array<double>,type:string> COMMENT 'from deserializer', 
+  `filter_level` string COMMENT 'from deserializer', 
+  `in_reply_to_screen_name` string COMMENT 'from deserializer', 
+  `is_quote_status` boolean COMMENT 'from deserializer', 
+  `id_str` string COMMENT 'from deserializer', 
+  `in_reply_to_user_id` bigint COMMENT 'from deserializer', 
+  `favorite_count` int COMMENT 'from deserializer', 
+  `id` bigint COMMENT 'from deserializer', 
+  `text` string COMMENT 'from deserializer')
+ROW FORMAT SERDE 
+  'org.openx.data.jsonserde.JsonSerDe' 
+WITH SERDEPROPERTIES ( 
+  'paths'='contributors,coordinates,created_at,display_text_range,entities,extended_entities,extended_tweet,favorite_count,favorited,filter_level,geo,id,id_str,in_reply_to_screen_name,in_reply_to_status_id,in_reply_to_status_id_str,in_reply_to_user_id,in_reply_to_user_id_str,is_quote_status,lang,place,possibly_sensitive,quote_count,quoted_status,quoted_status_id,quoted_status_id_str,quoted_status_permalink,reply_count,retweet_count,retweeted,retweeted_status,source,text,timestamp_ms,truncated,user,withheld_in_countries') 
+STORED AS INPUTFORMAT 
+  'org.apache.hadoop.mapred.TextInputFormat' 
+OUTPUTFORMAT 
+  'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+LOCATION
+  's3://tweet-bucket/raw/tweet_v1'
+TBLPROPERTIES (
+  'transient_lastDdlTime'='1618302403')
+```
+
+```
+DROP TABLE IF EXISTS tweet.hashtag_count_by_hour;
+CREATE EXTERNAL TABLE tweet.hashtag_count_by_hour(hashtag string
+									, nof bigint) 
+STORED AS PARQUET
+LOCATION 's3://tweet-bucket/result/hashtag-counts'
+TBLPROPERTIES ("parquet.compression"="SNAPPY");
+```
+
+
