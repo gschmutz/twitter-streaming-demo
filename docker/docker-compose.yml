@@ -227,6 +227,21 @@ services:
       - ./data-transfer:/data-transfer
     entrypoint: /bin/sh
     tty: true
+  #  ================================== kcat (used to be kafkacat)  ========================================== #
+  kcat:
+    image: edenhill/kcat:1.7.0
+    container_name: kcat
+    hostname: kcat
+    labels:
+      com.platys.name: kcat
+    volumes:
+      - ./data-transfer:/data-transfer
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        while [ 1 -eq 1 ];do sleep 60;done
+    restart: unless-stopped
   #  ================================== Apache Kafka HQ (AKHQ) ========================================== #
   akhq:
     image: tchiotludo/akhq:latest

@@ -129,9 +129,9 @@
       KAFKA_MQTTPROXY_enable: false
       KAFKA_MQTTPROXY_topic_regex_list:
       #
-      # ===== Kafkacat ========
+      # ===== kcat ========
       #
-      KAFKACAT_enable: true
+      KCAT_enable: true
       #
       # ===== Various Kafka UIs ========
       #
