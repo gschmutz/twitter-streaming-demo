@@ -40,7 +40,7 @@ docker exec -ti kafka-1 kafka-topics --create --topic tweet-json --partitions 8 
 To check for message, let's start a console consumer using the `kafkacat` utility. We can either have `kafkacat` installed locally or use the containerized version which is part of the platform.
 
 ```bash
-docker exec -ti kafkacat kafkacat -b kafka-1:19092 -t tweet-json
+docker exec -ti kcat kcat -b kafka-1:19092 -t tweet-json
 ```
 
 Start the pipeline in StreamSets.
@@ -146,7 +146,7 @@ Let's work with some nested fields. Inside the `entities` structure there is a `
 
 ```sql
 SELECT text, entities->user_mentions 
-FROMINS
+FROM tweet_json_s EMIT CHANGES;
 ```
 
 With that we can easily check the array for all the tweets where `@realDonaldTrump` is mentioned
@@ -210,38 +210,44 @@ In the 4th step, we will be using the [Elastisearch](https://www.elastic.co/elas
 
 Navigate to <http://dataplatform:18630> to open StreamSets and create a new pipeline. 
 
-Add a `Kafka Consumer` origin and a `Amazon S3` destination.
+Add a `Kafka Consumer` origin and a `Elasticsearch` destination.
 
 For the `Kafka Consumer` configure these properties:
 
 * Tab **Kafka**
   * **Broker URI**: `kafka-1:19092`
-  * **Consumer Group**: `TweetConsumerV1`
+  * **Consumer Group**: `tweet-json-to-es`
   * **Topic**: `tweet-json`
   * **Zookeeper URI**: `zookeeper-1:2181`
-  * **Max Batch Size (records)**: `10000`
-  * **Batch Wait Time (ms): `200000`
+  * **Max Batch Size (records)**: `1000`
+  * **Batch Wait Time (ms)**: `2000`
 * Tab **Data Format**
   * **Data Format**: `JSON`
   * **Max object Length (chars)**: `409600`   
 
 
-For the `Amazon S3` configure these properties (as the MinIO is part of the self-contained platform, we can put the Access key and Secret Access key here in the text):
+For the `Elasticsearch` configure these properties (as the MinIO is part of the self-contained platform, we can put the Access key and Secret Access key here in the text):
 
-* Tab **Amazon S3**
-  * **Authentication Method**: `AWS Keys`
-  * **Access Key ID**: `V42FCGRVMK24JJ8DHUYG`
-  * **Secret Access Key**: `bKhWxVF3kQoLY9kFmt91l+tDrEoZjqnWXzY9Eza`
-  * **Use Specific Region**: `X`
-  * **Region**: `Other - specify`
-  * **Endpoint**: `http://minio:9000`
-  * **Bucket**: `tweet-bucket`
-  * **Common Prefix**: `raw`
-  * **Object Name Suffix**: `json`
-  * **Delimiter**: `/`
-  * **Use Path Style Address Model**: `X`
-* Tab **Data Format**
-  * **Data Format**: `JSON`
+* Tab **Elasticsearch**
+  * **HTTP URL**: `http://elasticsearch-1`
+  * **HTTP Port**: `9200`
+  * **Index**: `tweet`
+  * **Mapping**: `tweet-mapping`
+
+Add a `Field Type Converter` after the `Kafka` origin. 
+
+* Tab **Conversions**
+  * **Conversion Method**: `By Field Name`
+  * **Fields to Convert**: `/created_at`
+  * **Convert to Type**: `DATETIME`
+  * **Date Format**: `Other..`
+  * **Other Data Format**: `EEE MMM dd HH:mm:ss Z yyyy`
+ 
+Add a `Expression Evaluator` after the `Field Type Converter` processor. 
+
+* Tab **Expressions**
+  * **Output Field**: `/created_at`
+  * **Field Expression**: `${time:extractStringFromDate( record:value('/created_at'),'yyyy/MM/dd HH:mm:ss')}`
 
 ## Processing Tweets using Apache Spark
 
