@@ -6,13 +6,13 @@ If you don’t see your question here, feel free to add an issue on GitHub.
 
 Running `Platys` itself on Raspberry Pi has not been tested so far. 
 
-But the `modern-data-platform-stack` supports generating a docker-compose file with only components running on ARM devices. You can find the services which support ARM in the [configuration file reference](../platform-stacks/modern-data-platform/documentation/configuration).
+But the `modern-data-platform-stack` supports generating a docker-compose file with only components running on ARM devices. You can find the services which support ARM in the [configuration file reference](../platform-stacks/modern-data-platform/documentation/configuration.md).
 
 If you want to easily start with docker on Raspberry Pi, we suggest to use [HyperiotOS](https://blog.hypriot.com/).  
 
 ## How can I add additional services, not supported by a Platform Stack?
 
-Find the documentation on how to do this in the [Platys project](https://github.com/TrivadisPF/platys/tree/master/documentation/docker-compose-override).
+Find the documentation on how to do this in the [Platys project](https://github.com/TrivadisPF/platys/tree/master/documentation/docker-compose-override.md).
 
 ## How can I provision Kafka topics automatically?
 
@@ -159,5 +159,5 @@ Add this service to the `docker-compose.override.yml` file.
    
 ## `platys` documentation
 
-* [Getting Started with `platys` and the `modern-data-platform` platform stack](getting-started)
-* [Explore the full list of Platys commands](https://github.com/TrivadisPF/platys/tree/master/documentation/overview-platys-command)
+* [Getting Started with `platys` and the `modern-data-platform` platform stack](getting-started.md)
+* [Explore the full list of Platys commands](https://github.com/TrivadisPF/platys/tree/master/documentation/overview-platys-command.md)

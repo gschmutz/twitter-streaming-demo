@@ -10,7 +10,7 @@ This recipe will show how to upload data to HDFS.
 
 ## Initialise data platform
 
-First [initialise a platys-supported data platform](../documentation/getting-started) with the following services enabled
+First [initialise a platys-supported data platform](../documentation/getting-started.md) with the following services enabled
 
 ```
 platys init --enable-services HADOOP,HIVE_METASTORE,TRINO,PROVISIONING_DATA -s trivadis/platys-modern-data-platform -w 1.11.0

@@ -16,9 +16,3 @@ platys gen
 ```
 docker exec -ti kcat kcat
 ```
-
-### Consume with Consumer Group
-
-```bah
-docker exec -ti kcat kcat -G mygroup mytopic -b kafka-1:19092  -c 1 -o end
-```

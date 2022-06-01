@@ -14,7 +14,7 @@ This recipe shows, how the `SDC ID` can be fixed to a value, so that recreating 
 
 ## Initialise data platform
 
-First [initialise a platys-supported data platform](../documentation/getting-started) with the following services enabled
+First [initialise a platys-supported data platform](../documentation/getting-started.md) with the following services enabled
 
 ```
 platys init --enable-services STREAMSETS -s trivadis/platys-modern-data-platform -w 1.13.0

@@ -2,9 +2,9 @@
       # this file can be used as a template for a custom configuration
       # or to know about the different variables available for the generator
       platys:
-          platform-name: 'aws-demo-platform'
+          platform-name: 'twitter-demo-platform'
           platform-stack: 'trivadis/platys-modern-data-platform'
-          platform-stack-version: '1.14.0-preview'
+          platform-stack-version: '1.15.0-preview'
           structure: 'flat'
       # ========================================================================
       # Global configuration, valid for all or a group of services
@@ -189,7 +189,7 @@
       SPARK_enable: true
       # either 2 or 3
       SPARK_major_version: 3
-      SPARK3_version: 3.0.2
+      #SPARK3_version: 3.0.2
       
       # "hive" or "in-memory"
       SPARK_catalog: in-memory

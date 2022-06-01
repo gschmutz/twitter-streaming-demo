@@ -4,7 +4,7 @@ This tutorial will show how to query Minio with Hive and Presto.
 
 ## Initialise a platform
 
-First [initialise a platys-supported data platform](../../getting-started) with the following services enabled in the `condfig.yml`
+First [initialise a platys-supported data platform](../../getting-started.md) with the following services enabled in the `condfig.yml`
 
 ```
       HIVE_METASTORE_enable: true

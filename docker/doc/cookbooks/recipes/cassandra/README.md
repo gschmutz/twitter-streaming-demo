@@ -4,7 +4,7 @@ This recipe will show how to use Casandra
 
 ## Initialise data platform
 
-First [initialise a platys-supported data platform](../documentation/getting-started) with the following services enabled
+First [initialise a platys-supported data platform](../documentation/getting-started.md) with the following services enabled
 
 ```
 platys init --enable-services CASSANDRA -s trivadis/platys-modern-data-platform -w 1.8.0

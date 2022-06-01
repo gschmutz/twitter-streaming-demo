@@ -12,7 +12,7 @@ If you want to know more on the concept of Architecture Decision Records (ADRs),
 
 ## Initialise a platform
 
-First [initialise a platys-supported data platform](../../getting-started) with the following services enabled 
+First [initialise a platys-supported data platform](../../getting-started.md) with the following services enabled 
 
 ```bash
 platys init --enable-services LOG4BRAINS,WETTY,MARKDOWN_VIEWER -s trivadis/platys-modern-data-platform -w 1.12.0

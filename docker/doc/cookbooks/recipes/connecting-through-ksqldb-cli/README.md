@@ -4,7 +4,7 @@ This recipe will show how to connect throught the CLI to ksqlDB.
 
 ## Initialise data platform
 
-First [initialise a platys-supported data platform](../documentation/getting-started) with the following services enabled
+First [initialise a platys-supported data platform](../documentation/getting-started.md) with the following services enabled
 
 ```bash
 platys init --enable-services KAFKA,KAFKA_KSQLDB -s trivadis/platys-modern-data-platform -w 1.9.1

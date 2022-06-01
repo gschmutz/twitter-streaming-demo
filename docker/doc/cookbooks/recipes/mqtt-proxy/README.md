@@ -4,7 +4,7 @@ In this recipe we will see how we can use the [Confluent MQTT Proxy](https://doc
 
 ## Initialise data platform
 
-First [initialize a platys-supported data platform](../documentation/getting-started) with the following services enabled
+First [initialize a platys-supported data platform](../documentation/getting-started.md) with the following services enabled
 
 ```
 platys init --enable-services KAFKA_MQTTPROXY,KAFKA -s trivadis/platys-modern-data-platform -w 1.8.0

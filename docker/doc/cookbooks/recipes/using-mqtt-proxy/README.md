@@ -6,7 +6,7 @@ This recipe will show how to use the [Confluent MQTT proxy](https://docs.conflue
 
 ## Initialise data platform
 
-First [initialise a platys-supported data platform](../documentation/getting-started) with the following services enabled
+First [initialise a platys-supported data platform](../documentation/getting-started.md) with the following services enabled
 
 ```bash
 platys init --enable-services KAFKA,KAFKA_MQTTPROXY,KAFKACAT -s trivadis/platys-modern-data-platform -w 1.10.0

@@ -10,7 +10,7 @@ This recipe will show how to use a public docker image for Oracle XE. This is in
 
 ## Initialise data platform
 
-First [initialise a platys-supported data platform](../documentation/getting-started) with the following services enabled
+First [initialise a platys-supported data platform](../documentation/getting-started.md) with the following services enabled
 
 ```bash
 platys init --enable-services ORACLE_XE -s trivadis/platys-modern-data-platform -w 1.13.0

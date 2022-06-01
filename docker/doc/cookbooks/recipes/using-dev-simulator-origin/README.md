@@ -1,7 +1,7 @@
 ---
 technoglogies:      streamsets
-version:				1.13.0
-validated-at:			11.11.2021
+version:				1.12.0
+validated-at:			10.5.2021
 ---
 
 # Using Dev Simulator Orgin to simulate streaming data
@@ -10,7 +10,7 @@ This recipe will show how to use a public docker image for Oracle XE. This is in
 
 ## Initialise data platform
 
-First [initialise a platys-supported data platform](../documentation/getting-started) with the following services enabled
+First [initialise a platys-supported data platform](../documentation/getting-started.md) with the following services enabled
 
 ```
 platys init --enable-services STREAMSETS,KAFKA,KAFKA_AKHQ -s trivadis/platys-modern-data-platform -w 1.12.0
@@ -33,10 +33,10 @@ Download and unpack the Dev Simulator custom origin
 ```
 cd plugins/streamsets/user-libs
 
-wget https://github.com/TrivadisPF/streamsets-dev-simulator/releases/download/0.7.1/dev-simulator-0.7.1.tar.gz 
+wget https://github.com/TrivadisPF/streamsets-dev-simulator/releases/download/0.7.0/dev-simulator-0.7.0.tar.gz 
 
-tar -xvzf dev-simulator-0.7.1.tar.gz 
-rm dev-simulator-0.7.1.tar.gz 
+tar -xvzf dev-simulator-0.7.0.tar.gz 
+rm dev-simulator-0.7.0.tar.gz 
 
 cd ../../..
 ```
@@ -85,62 +85,6 @@ Dev Simulator Properties (only the ones which have to change from the defaults):
   * **Timestamp Mode:** `Relative from Anchor Timestamp`
   * **Timestamp Field:** `/0`
   * **Relative Time Resolution:** `seconds`
-  * **Anchor Time is Now?:** `true`
-* **Data Format**
-  * **Header Line:** `No Header Line`
-
-### without header and milliseconds
-
-`relative-anchor-without-header-millisec.csv`
-
-```
-1000,10,1
-5000,10,2
-10000,10,3
-15000,10,4
-20000,10,5
-```
-
-Streamsets: `RelativeAnchorTimeWithoutHeaderMillisec`
-
-Dev Simulator Properties (only the ones which have to change from the defaults):
-
-* **Files**
-  * **Files Directory:** `/data-transfer/data`
-  * **File Name Pattern:** `relative-anchor-without-header-millisec.csv`
-  * **Different Record Types?:** `false`
-* **Event Time**
-  * **Timestamp Mode:** `Relative from Anchor Timestamp`
-  * **Timestamp Field:** `/0`
-  * **Relative Time Resolution:** `milliseconds`
-  * **Anchor Time is Now?:** `true`
-* **Data Format**
-  * **Header Line:** `No Header Line`
-
-### without header and milliseconds (with decimals)
-
-`relative-anchor-without-header-millisec-decimals.csv`
-
-```
-1000.10,10,1
-5000.11,10,2
-10000.12,10,3
-15000.00,10,4
-20000.50,10,5
-```
-
-Streamsets: `RelativeAnchorTimeWithoutHeaderMillisecDecimals`
-
-Dev Simulator Properties (only the ones which have to change from the defaults):
-
-* **Files**
-  * **Files Directory:** `/data-transfer/data`
-  * **File Name Pattern:** `relative-anchor-without-header-millisec.csv`
-  * **Different Record Types?:** `false`
-* **Event Time**
-  * **Timestamp Mode:** `Relative from Anchor Timestamp`
-  * **Timestamp Field:** `/0`
-  * **Relative Time Resolution:** `milliseconds`
   * **Anchor Time is Now?:** `true`
 * **Data Format**
   * **Header Line:** `No Header Line`
@@ -317,38 +261,3 @@ Dev Simulator Properties (only the ones which have to change from the defaults):
   * **Descriminator field:** `/descriminator`
 * **Data Format**
   * **Header Line:** `With Header Line`
-
-## Using Absolute
-
-You can find the StreamSets pipeline in the folder `streamsets`.
-
-### without header
-
-`absolute-without-header.csv`
-
-```
-2021-11-16T09:00:01+0100,10,1
-2021-11-16T09:00:05+0100,10,2
-2021-11-16T09:00:10+0100,10,3
-2021-11-16T09:00:15+0100,10,3
-2021-11-16T09:00:20+0100,10,3
-```
-
-Streamsets: `AbsoluteTimeWithoutHeader`
-
-Dev Simulator Properties (only the ones which have to change from the defaults):
-
-* **Files**
-  * **Files Directory:** `/data-transfer/data`
-  * **File Name Pattern:** `absolute-without-header.csv`
-  * **Different Record Types?:** `false`
-* **Event Time**
-  * **Timestamp Mode:** `Absolute with Start Timestamp`
-  * **Timestamp Field:** `/0`
-  * **Timestamp Format** `yyyy-MM-dd'T'HH:mm:ssZ`
-  * **Simulation Start Timestamp:** `2021-11-16T09:00:00+0100`
-  * **Simulation Start Timestamp Format** `yyyy-MM-dd'T'HH:mm:ssZ`
-* **Data Format**
-  * **Header Line:** `No Header Line`
-
-  

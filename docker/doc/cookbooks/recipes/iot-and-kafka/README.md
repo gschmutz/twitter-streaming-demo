@@ -4,7 +4,7 @@ This tutorial will show how to ingest IoT Data into Kafka and from there into Ob
 
 ## Initialise a platform
 
-First [initialise a platys-supported data platform](../../getting-started) with the following services enabled in the `config.yml`
+First [initialise a platys-supported data platform](../../getting-started.md) with the following services enabled in the `config.yml`
 
 ```
       KAFKA_enable: true

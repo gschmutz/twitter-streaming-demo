@@ -3,7 +3,7 @@
 | Service Name | Web UI | Rest API |
 |-------------- |------|------------
 {%- for service in services.items() | sort() %}
-| {%- if service[1].labels and service[1].labels['com.platys.name'] is defined -%} [{{ service[0]}}](./documentation/services/{{service[1].labels['com.platys.name'] }} ) {%- else -%} {{ service[0]}} {%- endif -%}  |
+| [{{ service[0]}}](./documentation/services/{{ service[0] | replace("-1", "") | replace("-2", "") | replace("-3", "") | replace("-4", "") | replace("-5", "") }})  |
   {%- if service[1].labels -%}
   {%- for label,value in service[1].labels.items() -%}
     {%- if label == 'com.platys.webui.title' -%}

@@ -4,7 +4,7 @@ This recipe will show how to use Hive Metastore with Spark.
 
 ## Initialise data platform
 
-First [initialise a platys-supported data platform](../documentation/getting-started) with the following services enabled
+First [initialise a platys-supported data platform](../documentation/getting-started.md) with the following services enabled
 
 ```
 platys init --enable-services SPARK,HIVE_METASTORE,MINIO,PROVISIONING_DATA -s trivadis/platys-modern-data-platform -w 1.8.0

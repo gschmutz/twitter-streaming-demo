@@ -7,7 +7,7 @@ The platform we will create here, uses Kafka and Zookeeper, but the process shou
 
 ## Prerequisites
 
-Make sure that you have already installed the [Docker Engine](https://docs.docker.com/install/), [Docker Compose](https://docs.docker.com/compose/install/) and the [`platys`](https://github.com/TrivadisPF/platys/blob/master/documentation/install) toolset. 
+Make sure that you have already installed the [Docker Engine](https://docs.docker.com/install/), [Docker Compose](https://docs.docker.com/compose/install/) and the [`platys`](https://github.com/TrivadisPF/platys/blob/master/documentation/install.md) toolset. 
 
 ## Step 1: Initialise the environment
 
@@ -164,7 +164,7 @@ For this sample, we want to create a platform running Kafka and the AKHQ Managem
 
 You only have to explicitly enable what you need, as each service is disabled by default. Other settings have meaningful defaults as well. So you can also delete the values for all the services you don't need. 
 
-All configuration settings for the `platys-modern-data-platform` platform stack are documented [here](Configuration).
+All configuration settings for the `platys-modern-data-platform` platform stack are documented [here](Configuration.md).
 
 
 A shortcut exists with the `--enable-services` flag, which directly generates a `config.yml` file with the services needed. So to enable `KAFKA` and `AKHQ` directly from the `init`, we can use
@@ -348,6 +348,6 @@ At this point, you have seen the basics of how `platys` works using the `modern-
 
 ## Where to go next
 
-* [Explore the full list of Platys commands](https://github.com/TrivadisPF/platys/tree/master/documentation/overview-platys-command)
-* [Modern Data Platform Stack configuration file reference](configuration)
+* [Explore the full list of Platys commands](https://github.com/TrivadisPF/platys/tree/master/documentation/overview-platys-command.md)
+* [Modern Data Platform Stack configuration file reference](configuration.md)
 1.13.0

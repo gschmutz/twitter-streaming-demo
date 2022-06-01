@@ -10,7 +10,7 @@ This recipe will show how to access a [Delta Lake](http://delta.io) table with T
 
 ## Initialise data platform
 
-First [initialise a platys-supported data platform](../documentation/getting-started) with the following services enabled
+First [initialise a platys-supported data platform](../documentation/getting-started.md) with the following services enabled
 
 ```bash
 platys init --enable-services SPARK,HIVE_METASTORE,MINIO,AWSCLI,TRINO,PROVISIONING_DATA -s trivadis/platys-modern-data-platform -w 1.11.0

@@ -1,32 +1,6 @@
 # `modern-data-platform` - What's new?
 
-See [Upgrade to a new platform stack version](https://github.com/TrivadisPF/platys/blob/master/documentation/upgrade-platform-stack) for how to upgrade to newer version.
-
-## What's new in 1.14.0
-
-The Modern Data Platform version 1.14.0 contains the following bug fixes and enhancements:
-
-### New Services
-
- * Kouncil
-
-### New Cookbook Recipes
-
-### Version upgrades
-
- * Update `DataHub` to `0.8.17`
- * Update `Trino` to `364`
- * Update `Confluent` to `7.0.0`
- * Update `Apache NiFi` to `1.15.0`
- * Update `Hasura` to `v2.0.0-beta.2`
- * Update `ksqlDB` to `0.22.0`
- 
-### Breaking Changes
-
- * InfluxDB is now listening on `19999` instead of `9999`
-
-### Enhancements 
-### Bug Fixes 
+See [Upgrade to a new platform stack version](https://github.com/TrivadisPF/platys/blob/master/documentation/upgrade-platform-stack.md) for how to upgrade to newer version.
 
 ## What's new in 1.13.0
 
@@ -206,7 +180,7 @@ The Modern Data Platform version 1.12.0 contains the following new services and 
   
  * Added support for Kafka Monitoring using JMX and Prometheus/Grafana (with input from this [confluent github project](https://github.com/confluentinc/jmx-monitoring-stacks)
  * use official Cloudbeaver docker image and no longer the trivadis one
- * [solution documentend](https://github.com/TrivadisPF/platys/blob/master/documentation/docker-compose-without-internet) on how to use a Platys-generated Platform without internet on the target infrastructure
+ * [solution documentend](https://github.com/TrivadisPF/platys/blob/master/documentation/docker-compose-without-internet.md) on how to use a Platys-generated Platform without internet on the target infrastructure
  
 ## What's new in 1.11.0
 
@@ -561,6 +535,6 @@ The Modern Analytical Data Platform Stack version 1.2.0 contains the following n
 * Rename `connect-n` service to `kafka-connect-n` to be more clear
 * Rename `broker-n` service to `kafka-n` to be more clear
 * Upgrade to Confluent Platform 5.4.0
-* Add [concept of edition](service-design) for Kafka and Jupyter services
+* Add [concept of edition](service-design.md) for Kafka and Jupyter services
 
 	

@@ -4,7 +4,7 @@ This tutorial will show the Hive Hook and Atlas in Action.
 
 ## Initialise a platform with Atlas and Hive
 
-First [initialise a platys-supported data platform](../../getting-started) with the following services enabled in the `config.yml`
+First [initialise a platys-supported data platform](../../getting-started.md) with the following services enabled in the `config.yml`
 
 ```
       KAFKA_enable: true

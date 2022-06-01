@@ -4,7 +4,7 @@ This tutorial will show how to use StreamSets Transformer to read CSV files and 
 
 ## Initialise a platform
 
-First [initialise a platys-supported data platform](../../getting-started) with the following services enabled in the `config.yml`
+First [initialise a platys-supported data platform](../../getting-started.md) with the following services enabled in the `config.yml`
 
 ```
       HIVE_METASTORE_enable: true

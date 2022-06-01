@@ -10,7 +10,7 @@ This recipe will show how to use a Spark cluster in the platform and connect it 
 
 ## Initialise data platform
 
-First [initialise a platys-supported data platform](../documentation/getting-started) with the following services enabled
+First [initialise a platys-supported data platform](../documentation/getting-started.md) with the following services enabled
 
 ```
 platys init --enable-services SPARK,POSTGRESQL,ZEPPELIN,PROVISIONING_DATA -s trivadis/platys-modern-data-platform -w 1.11.0

@@ -4,7 +4,7 @@ This tutorial will show how to access Delta Lake table from with Presto.
 
 ## Initialise a platform
 
-First [initialise a platys-supported data platform](../../getting-started) with the following services enabled in the `condfig.yml`
+First [initialise a platys-supported data platform](../../getting-started.md) with the following services enabled in the `condfig.yml`
 
 ```
       KAFKA_enable: true

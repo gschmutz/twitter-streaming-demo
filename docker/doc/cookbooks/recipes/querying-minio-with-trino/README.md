@@ -10,7 +10,7 @@ This tutorial will show how to query Minio with Hive and Trino.
 
 ## Initialise a platform
 
-First [initialise a platys-supported data platform](../../getting-started) with the following services enabled 
+First [initialise a platys-supported data platform](../../getting-started.md) with the following services enabled 
 
 ```
 platys init --enable-services TRINO,HIVE_METASTORE,MINIO,AWSCLI,PROVISIONING_DATA -s trivadis/platys-modern-data-platform -w 1.11.0

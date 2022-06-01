@@ -10,7 +10,7 @@ This recipe will show how to use the private docker image for Oracle EE provided
 
 ## Initialise data platform
 
-First [initialise a platys-supported data platform](../documentation/getting-started) with the following services enabled
+First [initialise a platys-supported data platform](../documentation/getting-started.md) with the following services enabled
 
 ```bash
 platys init --enable-services ORACLE_EE -s trivadis/platys-modern-data-platform -w 1.12.0
