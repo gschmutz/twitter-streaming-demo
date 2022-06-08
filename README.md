@@ -134,7 +134,7 @@ Now with the STREAM in place, we can use the SELECT statement to query from it
 SELECT * FROM tweet_json_s EMIT CHANGES;
 ```
 
-We have to specify the emit changes, as we are querying from a stream and by that the data is continuously pushed into the query (so called push query).
+We have to specify the `EMIT CHANGES` clause, as we are querying from a stream and therefore the data is continuously pushed into the query (so called push query).
 
 We can also selectively only return the data we are interested in, i.e. the `id`, the `text` and the `source` fields.
 
@@ -204,7 +204,7 @@ By using the `EMIT FINAL`, we specify that we only want to get a result at the e
 
 ## Storing Tweets in Elasticsearch
 
-In the 4th step, we will be using the [Elastisearch](https://www.elastic.co/elastic-stack) NoSQL datastore to persist the tweets for later retrieval by Kibana. Elasticsearch is popular for its text-based search capabilities.
+In the 4th step, we will be using the [Elasticsearch](https://www.elastic.co/elastic-stack) NoSQL datastore to persist the tweets for later retrieval by Kibana. Elasticsearch is popular for its text-based search capabilities.
 
 ![Alt Image Text](./images/use-case-step4a.png "Use Case Step 4a")
 
@@ -251,7 +251,7 @@ Add a `Expression Evaluator` after the `Field Type Converter` processor.
 
 ## Processing Tweets using Apache Spark
 
-In the 4th step, we will be using [Apache Spark](https://spark.apache.org/) to process the tweets we have stored in object storage. We will be using Apache Zeppelin for executing the Apache Spark statements in an "ad-hoc" fashion.
+In the 5th step, we will be using [Apache Spark](https://spark.apache.org/) to process the tweets we have stored in object storage. We will be using Apache Zeppelin for executing the Apache Spark statements in an "ad-hoc" fashion.
 
 ![Alt Image Text](./images/use-case-step4.png "Use Case Step 4")
 
