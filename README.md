@@ -85,10 +85,10 @@ For the `Amazon S3` configure these properties (as the MinIO is part of the self
 * Tab **Data Format**
   * **Data Format**: `JSON`
 
-Before we can now start the pipeline, we have to create the bucket in MinIO object storage. We can either do that in the MinIO Browser or through the s3cmd available in the `awscli` service. 
+The needed bucket in S3 has been created when starting the stack. We can easily check that by doing an `ls` 
 
 ```bash
-docker exec -ti awscli s3cmd mb s3://tweet-bucket
+docker exec -ti awscli s3cmd ls s3://tweet-bucket
 ```
 
 Start the pipeline in StreamSets. As soon as there are `10000` tweets available in the Kafka topic, the first object should be written out to MinIO object storage. 
