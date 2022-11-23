@@ -1,7 +1,7 @@
 # =======================================================================
 # Platform Name            twitter-demo-platform
 # Platform Stack:          trivadis/platys-modern-data-platform
-# Platform Stack Version:  1.15.0-preview
+# Platform Stack Version:  1.16.0-preview
 # =======================================================================
 version: '3.5'
 networks:
@@ -14,7 +14,7 @@ networks:
 services:
   #  ================================== Zookeeper ========================================== #
   zookeeper-1:
-    image: confluentinc/cp-zookeeper:7.1.0
+    image: confluentinc/cp-zookeeper:7.3.0
     container_name: zookeeper-1
     hostname: zookeeper-1
     labels:
@@ -32,7 +32,7 @@ services:
     restart: unless-stopped
 #  ================================== Kafka ========================================== #
   kafka-1:
-    image: confluentinc/cp-kafka:7.1.0
+    image: confluentinc/cp-kafka:7.3.0
     container_name: kafka-1
     hostname: kafka-1
     labels:
@@ -70,7 +70,7 @@ services:
       - ./data-transfer:/data-transfer
     restart: unless-stopped
   kafka-2:
-    image: confluentinc/cp-kafka:7.1.0
+    image: confluentinc/cp-kafka:7.3.0
     container_name: kafka-2
     hostname: kafka-2
     labels:
@@ -108,7 +108,7 @@ services:
       - ./data-transfer:/data-transfer
     restart: unless-stopped
   kafka-3:
-    image: confluentinc/cp-kafka:7.1.0
+    image: confluentinc/cp-kafka:7.3.0
     container_name: kafka-3
     hostname: kafka-3
     labels:
@@ -147,7 +147,7 @@ services:
     restart: unless-stopped
   #  ================================== ksqlDB ========================================== #
   ksqldb-server-1:
-    image: confluentinc/ksqldb-server:0.26.0
+    image: confluentinc/ksqldb-server:0.28.2
     hostname: ksqldb-server-1
     container_name: ksqldb-server-1
     labels:
@@ -158,12 +158,15 @@ services:
       - 8088:8088
       - 1095:1095
     environment:
-      KSQL_LOG4J_OPTS: -Dlog4j.configuration=file:/etc/ksqldb/log4j-rolling.properties
+      KSQL_LOG4J_OPTS: -Dlog4j.configuration=file:/opt/app/log4j/log4j.properties
+      KSQL_LOG4J_LOGGERS: org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR
+      KSQL_LOG4J_PROCESSING_LOG_TOPIC: ksql_processing_log
+      KSQL_LOG4J_PROCESSING_LOG_BROKERLIST: kafka-1:19092,kafka-2:19093,kafka-3:19094
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_NAME: ksql_processing_log
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_REPLICATION_FACTOR: 3
-      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: 'true'
-      KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: 'true'
       KSQL_KSQL_LOGGING_PROCESSING_ROWS_INCLUDE: 'true'
+      KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: 'true'
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: 'true'
       # For Demo purposes: improve resource utilization and avoid timeouts
       KSQL_KSQL_STREAMS_NUM_STREAM_THREADS: 1
       KSQL_PRODUCER_ENABLE_IDEMPOTENCE: 'true'
@@ -190,7 +193,7 @@ services:
     volumes:
       - ./data-transfer:/data-transfer
       - ./plugins/ksqldb:/etc/ksqldb/ext
-#      - ./conf/ksqldb/etc/log4j.properties:/etc/ksqldb/log4j.properties
+      - ./conf/ksqldb/etc/log4j.properties:/opt/app/log4j/log4j.properties
       - ./plugins/kafka-connect/connectors:/etc/kafka-connect/addl-plugins
       - ./plugins/kafka-connect/jars:/etc/kafka-connect/jars
       - ./plugins/opentelemetry/agents:/otel
@@ -198,7 +201,7 @@ services:
   # Access the cli by running:
   # > docker exec -it ksqldb-cli ksql http://ksqldb-server-1:8088
   ksqldb-cli:
-    image: confluentinc/ksqldb-cli:0.26.0
+    image: confluentinc/ksqldb-cli:0.28.2
     container_name: ksqldb-cli
     hostname: ksqldb-cli
     labels:
@@ -212,7 +215,7 @@ services:
     restart: unless-stopped
   #  ================================== Confluent Schema Registry ========================================== #
   schema-registry-1:
-    image: confluentinc/cp-schema-registry:7.1.0
+    image: confluentinc/cp-schema-registry:7.3.0
     hostname: schema-registry-1
     container_name: schema-registry-1
     labels:
@@ -551,7 +554,7 @@ services:
       - ./data-transfer:/data-transfer
       - ./plugins/spark/jars:/extra-jars
       - ./container-volume/spark/logs/:/var/log/spark/logs
-      - ./conf/s3cfg:/root/.s3cfg.template
+      - ./conf/awscli/s3cfg.template:/root/.s3cfg.template
     restart: unless-stopped
   #  ================================== Redash ========================================== #
   redash-server:
@@ -663,7 +666,7 @@ services:
       xpack.security.enabled: 'false'
       xpack.monitoring.enabled: 'false'
       http.cors.enabled: 'true'
-      http.cors.allow-origin: http://dejavu:1358,http://dataplatform:28125,http://analyticsplatform:28125,http://${PUBLIC_IP}:28125,http://${DOCKER_HOST_IP}:28125,http://127.0.0.1:1358
+      http.cors.allow-origin: http://${DOCKER_HOST_IP}:28275,http://${PUBLIC_IP}:28275,http://dejavu:1358,http://dataplatform:28125,http://dataplatform:28125,http://${PUBLIC_IP}:28125,http://${DOCKER_HOST_IP}:28125,http://127.0.0.1:1358
       http.cors.allow-headers: X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
       http.cors.allow-credentials: 'true'
       ES_JAVA_OPTS: -Xms512m -Xmx512m
@@ -698,7 +701,7 @@ services:
     restart: unless-stopped
   #  ================================== Trino ========================================== #
   trino-1:
-    image: starburstdata/starburst-enterprise:380-e.0
+    image: starburstdata/starburst-enterprise:399-e
     hostname: trino-1
     container_name: trino-1
     labels:
@@ -712,6 +715,8 @@ services:
       S3_AWS_ACCESS_KEY: V42FCGRVMK24JJ8DHUYG
       S3_AWS_SECRET_KEY: bKhWxVF3kQoLY9kFmt91l+tDrEoZjqnWXzY9Eza
       S3_PATH_STYLE_ACCESS: 'true'
+      HIVE_STORAGE_FORMAT: ORC
+      HIVE_COMPRESSION_CODEC: GZIP
       # this is only generated to keep the structure valid if no other env variables are present
       IGNORE: ignore
     volumes:
@@ -719,6 +724,11 @@ services:
       - ./conf/starburstdata/single/config.properties:/etc/starburst/config.properties
       - ./conf/starburstdata/single/node.properties:/etc/starburst/node.properties
       - ./conf/starburstdata/catalog/minio.properties:/etc/starburst/catalog/minio.properties
+      - ./conf/starburstdata/catalog/iceberg.properties:/etc/starburst/catalog/iceberg.properties
+      - ./conf/starburstdata/catalog/delta.properties:/etc/starburst/catalog/delta.properties
+      - ./conf/starburstdata/catalog/elasticsearch.properties:/etc/starburst/catalog/elasticsearch.properties
+      - ./security/starburstdata/password-authenticator.properties:/etc/starburst/password-authenticator.properties
+      - ./security/starburstdata/password.db:/etc/starburst/password.db
     restart: unless-stopped
   trino-cli:
     image: trivadis/trino-cli:latest
@@ -732,7 +742,7 @@ services:
     restart: unless-stopped
   #  ================================== Minio ========================================== #
   minio-1:
-    image: minio/minio:RELEASE.2022-05-19T18-20-59Z
+    image: minio/minio:RELEASE.2022-10-29T06-21-33Z
     container_name: minio-1
     hostname: minio-1
     labels:
@@ -791,12 +801,12 @@ services:
       AWS_DEFAULT_REGION: us-east-1
     volumes:
       - ./data-transfer:/data-transfer
-      - ./conf/s3cfg:/root/.s3cfg
+      - ./conf/awscli/s3cfg.template:/root/.s3cfg.template
     command: tail -f /dev/null
     restart: unless-stopped
   #  ================================== Wetty ========================================== #
   wetty:
-    image: svenihoney/wetty:latest
+    image: wettyoss/wetty:latest
     container_name: wetty
     hostname: wetty
     labels:
@@ -806,10 +816,12 @@ services:
     ports:
       - 3001:3000
     environment:
-      - REMOTE_SSH_SERVER=${DOCKER_HOST_IP}
-      - REMOTE_SSH_PORT=22
-      - REMOTE_SSH_USER=
-      - WETTY_PORT=3000
+      - SSHHOST=${DOCKER_HOST_IP}
+      - SSHPORT=22
+      - SSHUSER=
+      - SSHAUTH=password
+      - PORT=3000
+      - BASE=/
     volumes:
       - ./data-transfer:/data-transfer
     restart: unless-stopped
@@ -841,7 +853,7 @@ services:
       DATAPLATFORM_HOME: ${DATAPLATFORM_HOME}
       PLATYS_PLATFORM_NAME: twitter-demo-platform
       PLATYS_PLATFORM_STACK: trivadis/platys-modern-data-platform
-      PLATYS_PLATFORM_STACK_VERSION: 1.15.0-preview
+      PLATYS_PLATFORM_STACK_VERSION: 1.16.0-preview
       PLATYS_COPY_COOKBOOK_DATA: 'True'
     volumes:
       - ./artefacts/templates:/templates
