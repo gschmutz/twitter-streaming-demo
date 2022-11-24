@@ -2,10 +2,10 @@
   "pipelineConfig" : {
     "schemaVersion" : 6,
     "version" : 22,
-    "pipelineId" : "e49cd484d-eedc-4250-afa7-10e26eae755e",
+    "pipelineId" : "KafkatoE82198475-e885-48e6-b423-4cb5e46aed55",
     "title" : "Kafka_to_Elasticsearch",
     "description" : "",
-    "uuid" : "1acbf6fc-8eb3-4bf8-9283-08f7618f8d36",
+    "uuid" : "04d69310-36c7-475c-8c37-e2f027d29a66",
     "configuration" : [ {
       "name" : "executionMode",
       "value" : "STANDALONE"
@@ -443,7 +443,7 @@
     "fragments" : [ ],
     "stages" : [ {
       "instanceName" : "KafkaConsumer_01",
-      "library" : "streamsets-datacollector-apache-kafka_2_6-lib",
+      "library" : "streamsets-datacollector-apache-kafka_2_7-lib",
       "stageName" : "com_streamsets_pipeline_stage_origin_kafka_KafkaDSource",
       "stageVersion" : "14",
       "configuration" : [ {
@@ -805,7 +805,7 @@
         "value" : "TO_ERROR"
       } ],
       "uiInfo" : {
-        "yPos" : 102,
+        "yPos" : 103,
         "stageType" : "SOURCE",
         "rawSource" : {
           "configuration" : [ {
@@ -828,7 +828,7 @@
         "icon" : "kafka.png",
         "description" : "",
         "label" : "Kafka Consumer 1",
-        "xPos" : 160,
+        "xPos" : 159,
         "displayMode" : "ADVANCED"
       },
       "inputLanes" : [ ],
@@ -1008,13 +1008,13 @@
         "value" : null
       }, {
         "name" : "elasticSearchConfig.connection.serverUrl",
-        "value" : "https://i-o-optimized-deployment-7df0fd.es.us-west1.gcp.cloud.es.io"
+        "value" : "http://elasticsearch-1"
       }, {
         "name" : "elasticSearchConfig.connection.port",
-        "value" : "9243"
+        "value" : "9200"
       }, {
         "name" : "elasticSearchConfig.connection.useSecurity",
-        "value" : true
+        "value" : false
       }, {
         "name" : "elasticSearchConfig.params",
         "value" : [ ]
@@ -1032,13 +1032,13 @@
         "value" : [ ]
       } ],
       "uiInfo" : {
-        "yPos" : 102,
+        "yPos" : 103,
         "stageType" : "TARGET",
         "icon" : "elasticsearch.png",
         "description" : "",
         "label" : "Elasticsearch 1",
-        "xPos" : 969,
-        "displayMode" : "BASIC"
+        "xPos" : 972,
+        "displayMode" : "ADVANCED"
       },
       "inputLanes" : [ "ExpressionEvaluator_01OutputLane16232645341120" ],
       "outputLanes" : [ ],
@@ -1061,22 +1061,22 @@
       "services" : [ ]
     },
     "info" : {
-      "pipelineId" : "e49cd484d-eedc-4250-afa7-10e26eae755e",
+      "pipelineId" : "KafkatoE82198475-e885-48e6-b423-4cb5e46aed55",
       "title" : "Kafka_to_Elasticsearch",
       "description" : "",
-      "created" : 1623272373972,
-      "lastModified" : 1623272440714,
+      "created" : 1669233585581,
+      "lastModified" : 1669233846162,
       "creator" : "admin",
       "lastModifier" : "admin",
       "lastRev" : "0",
-      "uuid" : "1acbf6fc-8eb3-4bf8-9283-08f7618f8d36",
+      "uuid" : "04d69310-36c7-475c-8c37-e2f027d29a66",
       "valid" : true,
       "metadata" : {
         "labels" : [ ]
       },
-      "name" : "e49cd484d-eedc-4250-afa7-10e26eae755e",
+      "name" : "KafkatoE82198475-e885-48e6-b423-4cb5e46aed55",
       "sdcVersion" : "3.22.2",
-      "sdcId" : "960bd6ff-c95a-11eb-8573-393431075701"
+      "sdcId" : "05eb9f2c-6b65-11ed-8cf1-edf773fe892f"
     },
     "metadata" : {
       "labels" : [ ]
@@ -1487,7 +1487,7 @@
     } ],
     "dataRuleDefinitions" : [ ],
     "driftRuleDefinitions" : [ ],
-    "uuid" : "a42bcdfa-40fc-4d89-9ad4-ce0a5de56db4",
+    "uuid" : "4f54f21a-3130-405d-9a7f-c1598f33dc0d",
     "configuration" : [ {
       "name" : "emailIDs",
       "value" : [ ]

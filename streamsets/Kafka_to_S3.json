@@ -2,10 +2,10 @@
   "pipelineConfig" : {
     "schemaVersion" : 6,
     "version" : 22,
-    "pipelineId" : "KafkatoSb9af249a-7f50-4d3e-8477-184a1e070efc",
+    "pipelineId" : "KafkatoS70b559cc-dd27-4d4f-8cd8-76e7cc38f6a1",
     "title" : "Kafka_to_S3",
     "description" : "",
-    "uuid" : "5e4490c6-ee81-4a90-86a2-8729b61eedd8",
+    "uuid" : "db9639d4-9027-4b68-89a0-c657f5e2630c",
     "configuration" : [ {
       "name" : "executionMode",
       "value" : "STANDALONE"
@@ -443,7 +443,7 @@
     "fragments" : [ ],
     "stages" : [ {
       "instanceName" : "KafkaConsumer_01",
-      "library" : "streamsets-datacollector-apache-kafka_2_6-lib",
+      "library" : "streamsets-datacollector-apache-kafka_2_7-lib",
       "stageName" : "com_streamsets_pipeline_stage_origin_kafka_KafkaDSource",
       "stageVersion" : "14",
       "configuration" : [ {
@@ -805,7 +805,7 @@
         "value" : "GSSAPI"
       } ],
       "uiInfo" : {
-        "yPos" : 50,
+        "yPos" : 49,
         "stageType" : "SOURCE",
         "rawSource" : {
           "configuration" : [ {
@@ -828,7 +828,7 @@
         "icon" : "kafka.png",
         "description" : "",
         "label" : "Kafka Consumer 1",
-        "xPos" : 60,
+        "xPos" : 59,
         "displayMode" : "ADVANCED"
       },
       "inputLanes" : [ ],
@@ -979,7 +979,7 @@
         "icon" : "s3.png",
         "description" : "",
         "label" : "Amazon S3 1",
-        "xPos" : 280,
+        "xPos" : 281,
         "displayMode" : "ADVANCED"
       },
       "inputLanes" : [ "KafkaConsumer_01OutputLane16066529561270" ],
@@ -1124,22 +1124,22 @@
       "services" : [ ]
     },
     "info" : {
-      "pipelineId" : "KafkatoSb9af249a-7f50-4d3e-8477-184a1e070efc",
+      "pipelineId" : "KafkatoS70b559cc-dd27-4d4f-8cd8-76e7cc38f6a1",
       "title" : "Kafka_to_S3",
       "description" : "",
-      "created" : 1623268132669,
-      "lastModified" : 1623268195706,
+      "created" : 1669232311103,
+      "lastModified" : 1669232439237,
       "creator" : "admin",
       "lastModifier" : "admin",
       "lastRev" : "0",
-      "uuid" : "5e4490c6-ee81-4a90-86a2-8729b61eedd8",
+      "uuid" : "db9639d4-9027-4b68-89a0-c657f5e2630c",
       "valid" : true,
       "metadata" : {
         "labels" : [ ]
       },
-      "name" : "KafkatoSb9af249a-7f50-4d3e-8477-184a1e070efc",
+      "name" : "KafkatoS70b559cc-dd27-4d4f-8cd8-76e7cc38f6a1",
       "sdcVersion" : "3.22.2",
-      "sdcId" : "960bd6ff-c95a-11eb-8573-393431075701"
+      "sdcId" : "05eb9f2c-6b65-11ed-8cf1-edf773fe892f"
     },
     "metadata" : {
       "labels" : [ ]
@@ -1550,7 +1550,7 @@
     } ],
     "dataRuleDefinitions" : [ ],
     "driftRuleDefinitions" : [ ],
-    "uuid" : "1a363506-e9ae-493c-b269-dab05cefc80a",
+    "uuid" : "02a80720-04ab-4b6b-83ea-930ccaceb4e1",
     "configuration" : [ {
       "name" : "emailIDs",
       "value" : [ ]

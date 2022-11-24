@@ -255,12 +255,12 @@ In the 5th step, we will be using [Apache Spark](https://spark.apache.org/) to p
 
 ![Alt Image Text](./images/use-case-step4.png "Use Case Step 4")
 
-Navigate to <http://dataplatform:28080> to open Apache Zeppelin and login as user `admin` with password `abc123!`. Create a new notebook using the **Create new note** link. 
+Navigate to <http://dataplatform:28080> to open Apache Zeppelin and login as user `admin` with password `changeme`. Create a new notebook using the **Create new note** link. 
 
 Now let's read all the data we have stored to MinIO object storage so far, using the `spark.read.json` command
 
 ```scala
-val tweetRawDf = spark.read.json("s3a://tweet-bucket/raw/tweets-v1/")
+val tweetRawDf = spark.read.json("s3a://tweet-bucket/raw/tweets_v1/")
 ```
 
 Spark returns the result as a Data Frame, which is backed by a schema, derived from the JSON structure. We can use the `printSchema` method on the data frame to view the schema.
@@ -426,7 +426,7 @@ The result of the `spark.sql` is another, new data frame, which we can either do
 resultDf.write.parquet("s3a://tweet-bucket/result/hashtag-counts")
 ```
 
-We store it in Minio object storage in the same bucket as the raw data, but use another path `result/hashtag-counts` so that we can distinguish the raw twitter data from the `hashtag-counts` data. We also no longer use json as the data format but the more efficient parquet data format.
+We store it in object storage in the same bucket as the raw data, but use another path `result/hashtag-counts` so that we can distinguish the raw twitter data from the `hashtag-counts` data. We also no longer use json as the data format but the more efficient parquet data format.
 
 ## Using Trino to query the result in object storage
 
