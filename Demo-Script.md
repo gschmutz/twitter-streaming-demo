@@ -24,13 +24,13 @@ platys init -f -n tdwi-demo -s trivadis/platys-modern-data-platform -w 1.13.0-pr
 #### from Twitter
 
 ```
-https://stream.twitter.com/1.1/statuses/filter.json?track=platys,euro2020,euro2021
+https://stream.twitter.com/1.1/statuses/filter.json?track=fifa2022,WorldCup2022,fifaworldcup,QatarWorldCup2022,Qatar2022
 ```
 
-* `g8h9AYwlQKa8FqbuMG4EQ5iyQ`
-* `UCdk8nM5tjzFORvIXZeqIaO82P6iXZfqIrrlseouwEfNUSw8H5`
-* `18898576-fd7bpbMiMmc0ng0qdExGYFHoosi7WfvRx3lacY1p1`
-* `8R7tqXsdWoA9BnssvbEs58pEyl5eKySy8srqQAuzg4i2k`
+* `DcQ8rThsnifDurvouQz0GpZRa`
+* `daVHHwTjiCSQbWt0Sd0bePCdkHNys1vsKWgqDLr5KkH9YvXiCO`
+* `18898576-h6719llGmPkTRaMwJ3ope8WLUkfS0UGbJnrYID99F`
+* `Yxy9298sBZZYthTdp7Lok5gLJvWO3M6zhjh1NHErNdKs6`
 
 ```bash
 docker exec -ti kafka-1 kafka-topics --create --topic tweet-json --partitions 8 --replication-factor 3 --zookeeper zookeeper-1:2181
@@ -40,8 +40,8 @@ docker exec -ti kafka-1 kafka-topics --create --topic tweet-json --partitions 8 
 
 <http://dataplatform:9000>
 
-  * **Access Key ID**: `V42FCGRVMK24JJ8DHUYG`
-  * **Secret Access Key**: `bKhWxVF3kQoLY9kFmt91l+tDrEoZjqnWXzY9Eza`
+  * **Access Key ID**: ``
+  * **Secret Access Key**: ``
 
 ```bash
 docker exec -ti awscli s3cmd mb s3://tweet-bucket
