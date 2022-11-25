@@ -15,7 +15,7 @@ Add a `HTTP Client` origin and a `Kafka Producer` destination.
 For the `HTTP Client` configure these properties:
 
 * Tab **HTTP**
-  * **Resource URL**: `https://stream.twitter.com/1.1/statuses/filter.json?track=trump,biden`
+  * **Resource URL**: `https://stream.twitter.com/1.1/statuses/filter.json?track=fifa2022,WorldCup2022,fifaworldcup,QatarWorldCup2022,Qatar2022`
   * **Authentication Type**: `OAuth`
 * Tab **Credentials**
   * Set **Consumer Key**, **Consumer Secret**, **Token** and **Token Secret** to the values gotten from the Twitter application (registered here: <https://developer.twitter.com/en/apps>)
@@ -53,7 +53,7 @@ In the 2nd step, we will be using [StreamSets Data Collector](https://streamsets
 
 Navigate to <http://dataplatform:18630> to open StreamSets and create a new pipeline. 
 
-Add a `Kafka Consumer` origin and a `Amazon S3` destination.
+Add a `Kafka Consumer` origin and a `Amazon S3` destination. Add a `Expression Evaluator` in between the Kafka Consumer and the S3 destination.
 
 For the `Kafka Consumer` configure these properties:
 
@@ -68,6 +68,20 @@ For the `Kafka Consumer` configure these properties:
   * **Data Format**: `JSON`
   * **Max object Length (chars)**: `409600`     
 
+For the `Expression Evaluator` configure these properties:
+
+* Tab **General**
+  * **Name:** `Date for Partitioning Extractor`
+* Tab **Expressions**
+  * **Header Attribute**: `year`
+  * **Header Attribute Expression**: `${time:extractStringFromDate( time:millisecondsToDateTime( record:value('/timestamp_ms') ), 'yyyy')}` 
+  * **Header Attribute**: `month`
+  * **Header Attribute Expression**: `${time:extractStringFromDate( time:millisecondsToDateTime( record:value('/timestamp_ms') ), 'MM')}` 
+  * **Header Attribute**: `day`
+  * **Header Attribute Expression**: `${time:extractStringFromDate( time:millisecondsToDateTime( record:value('/timestamp_ms') ), 'dd')}` 
+  * **Header Attribute**: `hour`
+  * **Header Attribute Expression**: `${time:extractStringFromDate( time:millisecondsToDateTime( record:value('/timestamp_ms') ), 'HH')}` 
+
 For the `Amazon S3` configure these properties (as the MinIO is part of the self-contained platform, we can put the Access key and Secret Access key here in the text):
 
 * Tab **Amazon S3**
@@ -79,6 +93,7 @@ For the `Amazon S3` configure these properties (as the MinIO is part of the self
   * **Endpoint**: `http://minio:9000`
   * **Bucket**: `tweet-bucket`
   * **Common Prefix**: `raw/tweets-v1`
+  * **Partition Prefix**: `dt=${record:attribute('year')}-${record:attribute('month')}-${record:attribute('day')}/hr=${record:attribute('hour')}`
   * **Object Name Suffix**: `json`
   * **Delimiter**: `/`
   * **Use Path Style Address Model**: `X`
@@ -344,13 +359,35 @@ root
  |    |-- element: string (containsNull = true)
 ```
 
-We can see that the a tweet has a hierarchical structure and that the tweet text it self, the `text` field is only one part of much more information.
+We can see that a tweet has a hierarchical structure and that the tweet text it self, the `text` field is only one part of much more information.
+
+Optionally to restrict on the data, we can use the partitioning applied on the object storage
+
+```scala
+import org.apache.spark.sql.functions._
+
+case class Config(year: String = null,
+                  month: String = null,
+                  day: String = null,
+                  hour: String = null)
+
+val config = Config("2022", "11", "24", "12")
+
+val tweetFilteredDf = tweetRawDf.filter (s"dt = to_date('${config.year}${config.month}${config.day}','yyyyMMdd') and hr = '${config.hour}'")
+```
 
 Now let's use the `cache` method to cache the data in memory, so that further queries are more efficient
 
 ```scala
 val tweetRawCachedDf = tweetRawDf.cache()
 ```
+
+or if a filter has been used above
+
+```scala
+val tweetRawCachedDf = tweetFilteredDf.cache()
+```
+
 
 Let`s see one record of the data frame
 

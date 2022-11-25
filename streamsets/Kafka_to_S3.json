@@ -2,10 +2,10 @@
   "pipelineConfig" : {
     "schemaVersion" : 6,
     "version" : 22,
-    "pipelineId" : "KafkatoS70b559cc-dd27-4d4f-8cd8-76e7cc38f6a1",
+    "pipelineId" : "KafkatoS195298fe-9e05-40df-8021-91ce9e6f7fc7",
     "title" : "Kafka_to_S3",
     "description" : "",
-    "uuid" : "db9639d4-9027-4b68-89a0-c657f5e2630c",
+    "uuid" : "efc32bc2-6e99-4652-91db-2f1e6c65f89b",
     "configuration" : [ {
       "name" : "executionMode",
       "value" : "STANDALONE"
@@ -433,9 +433,9 @@
         "previewSource" : "CONFIGURED_SOURCE",
         "batchSize" : 10,
         "timeout" : 30000,
-        "writeToDestinations" : false,
+        "writeToDestinations" : true,
         "executeLifecycleEvents" : false,
-        "showHeader" : false,
+        "showHeader" : true,
         "showFieldType" : true,
         "rememberMe" : false
       }
@@ -724,7 +724,7 @@
         "value" : "zookeper-1:2181"
       }, {
         "name" : "kafkaConfigBean.consumerGroup",
-        "value" : "tweetConsumer"
+        "value" : "tweetConsumer2"
       }, {
         "name" : "kafkaConfigBean.topic",
         "value" : "tweet-json"
@@ -805,7 +805,7 @@
         "value" : "GSSAPI"
       } ],
       "uiInfo" : {
-        "yPos" : 49,
+        "yPos" : 55,
         "stageType" : "SOURCE",
         "rawSource" : {
           "configuration" : [ {
@@ -833,6 +833,60 @@
       },
       "inputLanes" : [ ],
       "outputLanes" : [ "KafkaConsumer_01OutputLane16066529561270" ],
+      "eventLanes" : [ ],
+      "services" : [ ]
+    }, {
+      "instanceName" : "ExpressionEvaluator_01",
+      "library" : "streamsets-datacollector-basic-lib",
+      "stageName" : "com_streamsets_pipeline_stage_processor_expression_ExpressionDProcessor",
+      "stageVersion" : "2",
+      "configuration" : [ {
+        "name" : "expressionProcessorConfigs",
+        "value" : [ {
+          "fieldToSet" : "/",
+          "expression" : "${record:value('/')}"
+        } ]
+      }, {
+        "name" : "headerAttributeConfigs",
+        "value" : [ {
+          "attributeToSet" : "year",
+          "headerAttributeExpression" : "${time:extractStringFromDate( time:millisecondsToDateTime( record:value('/timestamp_ms') ), 'yyyy')}"
+        }, {
+          "attributeToSet" : "month",
+          "headerAttributeExpression" : "${time:extractStringFromDate( time:millisecondsToDateTime( record:value('/timestamp_ms') ), 'MM')}"
+        }, {
+          "headerAttributeExpression" : "${time:extractStringFromDate( time:millisecondsToDateTime( record:value('/timestamp_ms') ), 'dd')}",
+          "attributeToSet" : "day"
+        }, {
+          "attributeToSet" : "hour",
+          "headerAttributeExpression" : "${time:extractStringFromDate( time:millisecondsToDateTime( record:value('/timestamp_ms') ), 'HH')}"
+        } ]
+      }, {
+        "name" : "fieldAttributeConfigs",
+        "value" : [ {
+          "fieldToSet" : "/"
+        } ]
+      }, {
+        "name" : "stageOnRecordError",
+        "value" : "TO_ERROR"
+      }, {
+        "name" : "stageRequiredFields",
+        "value" : [ ]
+      }, {
+        "name" : "stageRecordPreconditions",
+        "value" : [ ]
+      } ],
+      "uiInfo" : {
+        "yPos" : 54,
+        "stageType" : "PROCESSOR",
+        "icon" : "expression.png",
+        "description" : "",
+        "label" : "Date for Partitioning Extractor",
+        "xPos" : 328,
+        "displayMode" : "BASIC"
+      },
+      "inputLanes" : [ "KafkaConsumer_01OutputLane16066529561270" ],
+      "outputLanes" : [ "ExpressionEvaluator_01OutputLane16693550557840" ],
       "eventLanes" : [ ],
       "services" : [ ]
     }, {
@@ -947,7 +1001,7 @@
         "value" : 5242880
       }, {
         "name" : "s3TargetConfigBean.partitionTemplate",
-        "value" : null
+        "value" : "dt=${record:attribute('year')}-${record:attribute('month')}-${record:attribute('day')}/hr=${record:attribute('hour')}"
       }, {
         "name" : "s3TargetConfigBean.timeZoneID",
         "value" : "UTC"
@@ -974,15 +1028,15 @@
         "value" : [ ]
       } ],
       "uiInfo" : {
-        "yPos" : 50,
+        "yPos" : 55,
         "stageType" : "TARGET",
         "icon" : "s3.png",
         "description" : "",
         "label" : "Amazon S3 1",
-        "xPos" : 281,
+        "xPos" : 616,
         "displayMode" : "ADVANCED"
       },
-      "inputLanes" : [ "KafkaConsumer_01OutputLane16066529561270" ],
+      "inputLanes" : [ "ExpressionEvaluator_01OutputLane16693550557840" ],
       "outputLanes" : [ ],
       "eventLanes" : [ ],
       "services" : [ {
@@ -1124,22 +1178,22 @@
       "services" : [ ]
     },
     "info" : {
-      "pipelineId" : "KafkatoS70b559cc-dd27-4d4f-8cd8-76e7cc38f6a1",
+      "pipelineId" : "KafkatoS195298fe-9e05-40df-8021-91ce9e6f7fc7",
       "title" : "Kafka_to_S3",
       "description" : "",
-      "created" : 1669232311103,
-      "lastModified" : 1669232439237,
+      "created" : 1669354871002,
+      "lastModified" : 1669357065326,
       "creator" : "admin",
       "lastModifier" : "admin",
       "lastRev" : "0",
-      "uuid" : "db9639d4-9027-4b68-89a0-c657f5e2630c",
+      "uuid" : "efc32bc2-6e99-4652-91db-2f1e6c65f89b",
       "valid" : true,
       "metadata" : {
         "labels" : [ ]
       },
-      "name" : "KafkatoS70b559cc-dd27-4d4f-8cd8-76e7cc38f6a1",
+      "name" : "KafkatoS195298fe-9e05-40df-8021-91ce9e6f7fc7",
       "sdcVersion" : "3.22.2",
-      "sdcId" : "05eb9f2c-6b65-11ed-8cf1-edf773fe892f"
+      "sdcId" : "38318baf-6c83-11ed-815f-1352849c847c"
     },
     "metadata" : {
       "labels" : [ ]
@@ -1550,7 +1604,7 @@
     } ],
     "dataRuleDefinitions" : [ ],
     "driftRuleDefinitions" : [ ],
-    "uuid" : "02a80720-04ab-4b6b-83ea-930ccaceb4e1",
+    "uuid" : "960b4fe5-11af-47af-b7bb-9a9aa34a114c",
     "configuration" : [ {
       "name" : "emailIDs",
       "value" : [ ]
