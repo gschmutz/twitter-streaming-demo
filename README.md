@@ -47,9 +47,20 @@ Start the pipeline in StreamSets.
 
 ## Moving Data from Kafka to S3 compliant Object Storage
 
-In the 2nd step, we will be using [StreamSets Data Collector](https://streamsets.com/products/dataops-platform/data-collector/) to consume the data we have previously written to the Kafka topic and store it in minIO Object Storage (which is S3 compliant).
+In the 2nd step, we will be using [StreamSets Data Collector](https://streamsets.com/products/dataops-platform/data-collector/) to consume the data we have previously written to the Kafka topic and store it in S3 Object Storage (either using the local Minio or the "real" AWS S3 object storage service).
 
 ![Alt Image Text](./images/use-case-step2.png "Use Case Step 2")
+
+First let's make sure that we have the necessary bucket available in the Object Storage, using one of the two options:
+
+1. When using **Minio**, the necessary bucket has been created when starting the stack. We can easily check that by doing an `ls` 
+
+```bash
+docker exec -ti awscli s3cmd ls s3://tweet-bucket
+```
+
+2. When using **AWS S3 object storage service**, then the bucket has to be created via the S3 console on AWS. Make sure to use a globally unique name for the bucket, by for example adding your name as a prefix to `<yourname>-tweet-bucket`
+
 
 Navigate to <http://dataplatform:18630> to open StreamSets and create a new pipeline. 
 
@@ -82,9 +93,12 @@ For the `Expression Evaluator` configure these properties:
   * **Header Attribute**: `hour`
   * **Header Attribute Expression**: `${time:extractStringFromDate( time:millisecondsToDateTime( record:value('/timestamp_ms') ), 'HH')}` 
 
-For the `Amazon S3` configure these properties (as the MinIO is part of the self-contained platform, we can put the Access key and Secret Access key here in the text):
+For the `Amazon S3` sink, configure the properties using one of the two options:
 
-* Tab **Amazon S3**
+1. For Using the local **Minio Object Storage**, make the following configurations 
+
+* Tab **Amazon S3** 
+
   * **Authentication Method**: `AWS Keys`
   * **Access Key ID**: `V42FCGRVMK24JJ8DHUYG`
   * **Secret Access Key**: `bKhWxVF3kQoLY9kFmt91l+tDrEoZjqnWXzY9Eza`
@@ -97,14 +111,27 @@ For the `Amazon S3` configure these properties (as the MinIO is part of the self
   * **Object Name Suffix**: `json`
   * **Delimiter**: `/`
   * **Use Path Style Address Model**: `X`
+
 * Tab **Data Format**
   * **Data Format**: `JSON`
 
-The needed bucket in S3 has been created when starting the stack. We can easily check that by doing an `ls` 
+2. For Using the **AWS S3 object storage service**, make the following configurations 
 
-```bash
-docker exec -ti awscli s3cmd ls s3://tweet-bucket
-```
+
+* Tab **Amazon S3** 
+
+  * **Authentication Method**: `AWS Keys`
+  * **Access Key ID**: *add credentials from AWS*
+  * **Secret Access Key**: *add credentials from AWS*
+  * **Bucket**: `<prefix>-tweet-bucket` *(make sure to change the prefix to what you have used when creating the bucket in S3)*
+  * **Common Prefix**: `raw/tweets-v1`
+  * **Partition Prefix**: `dt=${record:attribute('year')}-${record:attribute('month')}-${record:attribute('day')}/hr=${record:attribute('hour')}`
+  * **Object Name Suffix**: `json`
+  * **Delimiter**: `/`
+
+* Tab **Data Format**
+  * **Data Format**: `JSON`
+
 
 Start the pipeline in StreamSets. As soon as there are `10000` tweets available in the Kafka topic, the first object should be written out to MinIO object storage. 
 
