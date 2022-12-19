@@ -564,45 +564,86 @@ Presto can be integrated into many standard data analytics tools, such as PowerB
 
 ## Using Athena (if on S3)
 
-```
-CREATE EXTERNAL TABLE tweet.tweets(
-  `in_reply_to_status_id_str` string COMMENT 'from deserializer', 
-  `in_reply_to_status_id` bigint COMMENT 'from deserializer', 
-  `created_at` string COMMENT 'from deserializer', 
-  `in_reply_to_user_id_str` string COMMENT 'from deserializer', 
-  `source` string COMMENT 'from deserializer', 
-  `retweet_count` int COMMENT 'from deserializer', 
-  `retweeted` boolean COMMENT 'from deserializer', 
-  `geo` struct<coordinates:array<double>,type:string> COMMENT 'from deserializer', 
-  `filter_level` string COMMENT 'from deserializer', 
-  `in_reply_to_screen_name` string COMMENT 'from deserializer', 
-  `is_quote_status` boolean COMMENT 'from deserializer', 
-  `id_str` string COMMENT 'from deserializer', 
-  `in_reply_to_user_id` bigint COMMENT 'from deserializer', 
-  `favorite_count` int COMMENT 'from deserializer', 
-  `id` bigint COMMENT 'from deserializer', 
-  `text` string COMMENT 'from deserializer')
-ROW FORMAT SERDE 
-  'org.openx.data.jsonserde.JsonSerDe' 
-WITH SERDEPROPERTIES ( 
-  'paths'='contributors,coordinates,created_at,display_text_range,entities,extended_entities,extended_tweet,favorite_count,favorited,filter_level,geo,id,id_str,in_reply_to_screen_name,in_reply_to_status_id,in_reply_to_status_id_str,in_reply_to_user_id,in_reply_to_user_id_str,is_quote_status,lang,place,possibly_sensitive,quote_count,quoted_status,quoted_status_id,quoted_status_id_str,quoted_status_permalink,reply_count,retweet_count,retweeted,retweeted_status,source,text,timestamp_ms,truncated,user,withheld_in_countries') 
-STORED AS INPUTFORMAT 
-  'org.apache.hadoop.mapred.TextInputFormat' 
-OUTPUTFORMAT 
-  'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
-LOCATION
-  's3://tweet-bucket/raw/tweet_v1'
-TBLPROPERTIES (
-  'transient_lastDdlTime'='1618302403')
+
+```sql
+DROP TABLE tweet.tweets;
+CREATE EXTERNAL TABLE IF NOT EXISTS tweet.tweets (
+	created_at string,
+	id bigint,
+	id_str string,
+	text string,
+	source string,
+	truncated boolean,
+	in_reply_to_status_id bigint,
+	in_reply_to_status_id_str string,
+	in_reply_to_user_id bigint,
+	in_reply_to_user_id_str string,
+	in_reply_to_screen_name string,
+	user struct<
+		id: bigint,
+		id_str: string,
+		name: string,
+		screen_name: string,
+		location: string,
+		url: string,
+		description: string,
+		translator_type: string,
+		protected: boolean,
+		verified: boolean,
+		followers_count: int,
+		listed_count: int,
+		favourites_count: bigint,
+		statuses_count: bigint,
+		created_at: string,
+		utc_offset: string,
+		time_zone: string,
+		geo_enabled: boolean,
+		lang: string,
+		contributors_enabled: boolean,
+		is_translator: boolean
+	>,
+	place string,
+	retweeted_status struct<
+		created_at: string,
+		id: bigint,
+		id_str: string,
+		text: string,
+		display_text_range: string,
+		source: string,
+		truncated: boolean,
+		in_reply_to_status_id: bigint,
+		in_reply_to_status_id_str: string,
+		in_reply_to_user_id: bigint,
+		in_reply_to_user_str: string,
+		in_reply_to_screen_name: string
+	>,
+	is_quote_status boolean,
+	quote_count bigint,
+	reply_count bigint,
+	retweet_count bigint,
+	favorite_count bigint,
+	entities struct<
+		hashtags: ARRAY<STRUCT<
+			text: string
+		>>,
+		urls: ARRAY<STRUCT<
+			url: string,
+			expanded_url: string,
+			display_url: string
+		>>
+	>,
+	favorited boolean,
+	retweeted boolean,
+	filter_level string,
+	lang string,
+	timestamp_ms bigint
+)
+PARTITIONED BY (dt string, hr string)
+ROW FORMAT SERDE 'org.openx.data.jsonserde.JsonSerDe'
+LOCATION 's3://tweet-bucket/raw/tweets_v1';
 ```
 
 ```
-DROP TABLE IF EXISTS tweet.hashtag_count_by_hour;
-CREATE EXTERNAL TABLE tweet.hashtag_count_by_hour(hashtag string
-									, nof bigint) 
-STORED AS PARQUET
-LOCATION 's3://tweet-bucket/result/hashtag-counts'
-TBLPROPERTIES ("parquet.compression"="SNAPPY");
+MSCK REPAIR TABLE `tweet.tweets`;
 ```
-
 
